@@ -7,7 +7,9 @@ module.exports = function(Bot, m, config) {
 		"invite": "invite_url",
 		"invite link": "invite_url",
 		"website": "website",
-		"website link": "website"
+		"website link": "website",
+		"description": "description",
+		"desc": "description"
 	}
 	var a = 0;
 	var type = "";
