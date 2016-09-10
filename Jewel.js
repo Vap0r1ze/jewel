@@ -5,7 +5,7 @@ var fs = require("fs");
 var reload = require("require-reload")(require);
 var _ = require("./data.js");
 
-var prefix = "j!";
+var prefix = config.prefix;
 
 Bot.on("messageCreate", (m)=>{
 	if (m.author.bot) return;
