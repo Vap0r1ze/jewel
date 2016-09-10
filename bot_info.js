@@ -3,11 +3,13 @@ const https = require("https");
 module.exports = function(Bot, m, config) {
 	var attributes = {
 		"prefix": "prefix",
+		"library": "library",
 		"lib": "library",
 		"invite": "invite_url",
 		"invite link": "invite_url",
-		"website": "website",
 		"website link": "website",
+		"website": "website",
+		"owner": "owner_ids",
 		"description": "description",
 		"desc": "description"
 	}

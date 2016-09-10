@@ -3,11 +3,20 @@ var config = require("./config.json");
 var Bot = bot(config.tokens.jewel);
 var fs = require("fs");
 var reload = require("require-reload")(require);
+var _ = require("./data.js");
 
 var prefix = "j!";
 
 Bot.on("messageCreate", (m)=>{
 	if (m.author.bot) return;
+	if (m.channel.isPrivate) return;
+	
+	var data = _.load();
+	if (!(data[m.author.id])) {
+		data[m.author.id] = {};
+	}
+	_.save(data);
+	
 	var commands = fs.readdirSync("./commands/");
 	if (m.content.startsWith(prefix)) {
 		var command = m.content.split(" ")[0].replace(prefix, "");
@@ -33,6 +42,9 @@ Bot.on("messageCreate", (m)=>{
 
 Bot.on("ready", function() {
 	console.log("Ready!");
+	Bot.voiceConnections.forEach(function(connection) {
+		connection.disconnect();
+	});
 });
 
 Bot.connect();
