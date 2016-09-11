@@ -1,7 +1,7 @@
 var bot = require("eris");
+var fs = require("fs");
 var config = require("./config.json");
 var Bot = bot(config.tokens.jewel);
-var fs = require("fs");
 var reload = require("require-reload")(require);
 var _ = require("./data.js");
 
@@ -32,6 +32,11 @@ Bot.on("messageCreate", (m)=>{
 				Bot.createMessage(m.channel.id, "An error has occured.");
 			}
 		}
+	}
+	try {
+		reload("./bot_info.js")(Bot, m, config);
+	} catch (err) {
+		console.log(err);
 	}
 	try {
 		reload("./bot_info.js")(Bot, m, config);
