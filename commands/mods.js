@@ -1,6 +1,6 @@
 module.exports = {
 	main: function(Bot, m, args) {
-		if (m.server.id == "110373943822540800") {
+		if (m.channel.guild.id == "110373943822540800") {
 			var members = m.channel.guild.members;
 			var mods = [];
 			members.forEach(function(member){
