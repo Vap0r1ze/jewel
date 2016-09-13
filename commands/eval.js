@@ -10,11 +10,15 @@ module.exports = {
 			} else {
 				u = false;
 			}
-			var ev = eval(args);
-			if (u) {
-				ev = util.inspect(ev)
+			try {
+				var ev = eval(args);
+				if (u) {
+					ev = util.inspect(ev)
+				}
+				Bot.createMessage(m.channel.id, ev);
+			} catch (err) {
+				Bot.createMessage(m.channel.id, err);
 			}
-			Bot.createMessage(m.channel.id, ev);
 		}
 	},
 	help: "Evaluates javascript code, Owner Only"
