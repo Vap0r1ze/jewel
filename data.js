@@ -2,9 +2,9 @@ const fs = require("fs");
 
 module.exports = {
 	load: function() {
-		return JSON.parse(fs.readFileSync("./data.json"));
+		return JSON.parse(fs.readFileSync("./db/data.json"));
 	},
 	save: function(data) {
-		fs.writeFileSync("./data.json", JSON.stringify(data, null, "\t"));
+		fs.writeFileSync("./db/data.json", JSON.stringify(data, null, "\t"));
 	}
 }

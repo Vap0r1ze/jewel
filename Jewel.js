@@ -1,15 +1,22 @@
 var bot = require("eris");
 var fs = require("fs");
-var config = require("./config.json");
+var config = require("./etc/config.json");
 var Bot = bot(config.tokens.jewel);
 var reload = require("require-reload")(require);
 var _ = require("./data.js");
+var events = fs.readdirSync("./events/");
+var colors = require("colors");
 
 var prefix = config.prefix;
 
 Bot.on("messageCreate", (m)=>{
 	if (m.author.bot) return;
 	if (m.channel.isPrivate) return;
+	
+	var loguser = `${m.author.username}#${m.author.discriminator}`.magenta.bold;
+	var logserver = `${m.channel.guild.name}`.cyan.bold;
+	var logchannel = `#${m.channel.name}`.green.bold;
+	var logdivs = [" > ".blue.bold, " - ".blue.bold];
 	
 	var data = _.load();
 	if (!(data[m.author.id])) {
@@ -25,30 +32,33 @@ Bot.on("messageCreate", (m)=>{
 			var args = m.content.split(" ");
 			args.splice(0, 1);
 			args = args.join(" ");
+			var logcmd = `${prefix}${command}`.bold;
+			var logargs = `${args}`.bold;
 			try {
 				cmd.main(Bot, m, args);
+				console.log("CMD".black.bgGreen+" "+loguser+logdivs[1]+logserver+logdivs[0]+logchannel+" "+logcmd.blue);
+				if (args) console.log("ARG".black.bgCyan+" "+logargs.blue.bold);
+				console.log('');
 			} catch (err) {
 				console.log(err);
 				Bot.createMessage(m.channel.id, "An error has occured.");
+				console.log("CMD".black.bgRed+" "+loguser+logdivs[1]+logserver+logdivs[0]+logchannel+" "+logcmd.red);
+				if (args) console.log("ARG".black.bgCyan+" "+logargs.red.bold);
+				console.log('');
 			}
 		}
 	}
-	try {
-		reload("./bot_info.js")(Bot, m, config);
-	} catch (err) {
-		console.log(err);
-	}
-	try {
-		reload("./bot_info.js")(Bot, m, config);
-	} catch (err) {
-		console.log(err);
-	}
 });
 
-Bot.on("ready", function() {
-	console.log("Ready!");
-	Bot.voiceConnections.forEach(function(connection) {
-		connection.disconnect();
+
+events.forEach(function(event) {
+	Bot.on(event, function(m) {
+		var eventjs = reload("./events/"+event+"/main.js");
+		try {
+			eventjs.main(Bot, m, config);
+		} catch (err) {
+			console.log(err);
+		}
 	});
 });
 
