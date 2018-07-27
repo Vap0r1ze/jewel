@@ -1,10 +1,8 @@
-module.exports = {
-	main: function (Bot, m, args) {
-		var time = process.hrtime();
-		Bot.createMessage(m.channel.id, "Pong!").then(msg=>{
-			var ms = Math.round(process.hrtime(time)[1] / 1000000);
-			Bot.editMessage(msg.channel.id, msg.id, "Pong! `"+ms+"ms`");
-		});
-	},
-	help: "Pong!"
-};
+let e = module.exports = {}
+
+e.run = function (msg, content) {
+  msg.reply('Pong!')
+}
+
+e.name = 'ping'
+e.desc = 'Ping pong ding dong wow'
