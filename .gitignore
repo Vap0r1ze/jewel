@@ -1,4 +1,13 @@
+# IDE
 .vscode
+
+# Packages
 node_modules
+
+# Config
 config/*
 !config/*.example.*
+
+# Data
+rethinkdb_data
+dumb.rdb
