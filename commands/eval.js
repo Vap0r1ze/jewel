@@ -1,7 +1,7 @@
 let e = module.exports = {}
-let Discord = require('discord.js')
 
-let util = require('util')
+const Discord = require('discord.js')
+const util = require('util')
 
 e.run = async function (msg, args) {
   let Bot = this
@@ -27,21 +27,6 @@ e.run = async function (msg, args) {
           response.edit(embed)
         }).catch(err => {
           // err
-        })
-      } else if (output && typeof output.run == 'function') {
-        output.run(Bot.db.  connection, (err, value) => {
-          if (err) {
-            Object.assign(embed.fields[1], {
-              name: `:floppy_disk: Error (${typeof value})`,
-              value: `\`\`\`\n${value}\`\`\``
-            })
-          } else {
-            Object.assign(embed.fields[1], {
-              name: `:floppy_disk: Data retrieved (${typeof value})`,
-              value: `\`\`\`js\n ${util.inspect(value)}\`\`\``
-            })
-          }
-          response.edit(embed)
         })
       }
     })

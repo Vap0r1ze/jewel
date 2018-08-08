@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "async": "^2.6.0",
+    "bluebird": "^3.5.1",
     "chalk": "^2.1.0",
     "dateformat": "^3.0.3",
     "discord.js": "^11.3.2",

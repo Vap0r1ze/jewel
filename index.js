@@ -6,6 +6,7 @@ const EventEmitter = require('events')
 const _ = require('async')
 const chalk = require('chalk')
 const getFiles = require('./util/getFiles.js')
+global.Promise = require('bluebird')
 
 // Bot Object
 const Bot = new EventEmitter()
