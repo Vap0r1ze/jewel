@@ -19,7 +19,7 @@ e.init = function (Bot) {
       if (!/[\w\-]/.test(command)) return
       if (fs.existsSync(`commands/${command}.js`)) {
         let cmd = require(`../commands/${command}.js`)
-        if (cmd.database && !Bot.db.connection) return
+        if (cmd.database && !Bot.db) return
         Bot.util.logger.cmd(command, msg.author)
         try {
           if (e.checkperms(cmd.perms, msg.author)) {

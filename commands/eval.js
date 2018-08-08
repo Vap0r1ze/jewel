@@ -1,7 +1,6 @@
 let e = module.exports = {}
 let Discord = require('discord.js')
 
-let request = require('superagent')
 let util = require('util')
 
 e.run = async function (msg, args) {
