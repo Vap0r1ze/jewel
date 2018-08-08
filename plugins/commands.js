@@ -6,11 +6,11 @@ e.dependencies = ['discordjs']
 
 e.init = function (Bot) {
   Bot.client.on('message', msg => {
-    if (msg.content.startsWith(Bot.config.main.prefix)) {
+    if (msg.content.startsWith(process.env.PREFIX)) {
       if (!msg.channel.guild) return
       if (msg.author.bot) return
       let args = msg.content
-        .replace(Bot.config.main.prefix, '')
+        .replace(process.env.PREFIX, '')
         .split(/\s+/)
         .filter(Boolean)
       let command = args.shift().toLowerCase()
@@ -36,7 +36,7 @@ e.init = function (Bot) {
 e.checkperms = function (Bot, title, member) {
   switch (title) {
     case 'Developer':
-      return Bot.config.main.devs.includes(member.id)
+      return process.env.DEVELOPERS.includes(member.id)
     default:
       return true
   }

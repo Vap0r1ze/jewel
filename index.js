@@ -1,3 +1,6 @@
+// Config
+require('dotenv').config()
+
 // Modules
 const EventEmitter = require('events')
 const _ = require('async')

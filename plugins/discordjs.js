@@ -3,17 +3,8 @@ let e = module.exports = {}
 let Discord = require('discord.js')
 let chalk = require('chalk')
 
-e.dependencies = ['config']
-
 e.init = function (Bot) {
-  let token
-  try {
-    token = Bot.config.main.tokens.discord
-  } catch (err) {
-    console.log(Bot.config)
-    Bot.util.logger.error('DJS', chalk`Could not find token at {red.bold main.yml (tokens.discord)}`)
-    return '404_token'
-  }
+  let token = process.env.BOT_TOKEN
   let client = Bot.client = new Discord.Client()
   Bot.on('init', () => {
     client.login(token)

@@ -5,8 +5,7 @@
 node_modules
 
 # Config
-config/*
-!config/*.example.*
+.env
 
 # Data
 dump.rdb
