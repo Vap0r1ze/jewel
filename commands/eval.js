@@ -4,7 +4,6 @@ const Discord = require('discord.js')
 const util = require('util')
 
 e.run = async function (msg, args) {
-  let Bot = this
   let code = msg.content.split(' ').splice(1).join(' ')
   let embed = new Discord.RichEmbed()
   if (!code) {
@@ -20,13 +19,20 @@ e.run = async function (msg, args) {
     msg.channel.send({ embed: embed }).then(response => {
       if (output && typeof output.then == 'function') {
         output.then(value => {
-          Object.assign(embed.fields[1], {
+          Object.assign(embed, { fields: [{
             name: `:gem: Resolved (${typeof value})`,
             value: `\`\`\`js\n${util.inspect(value)}\`\`\``
-          })
+          }] })
           response.edit(embed)
         }).catch(err => {
-          // err
+          Object.assign(embed, {
+            color: 0xf04747,
+            fields: [{
+              name: `:no_entry_sign: ${err.constructor.name}`,
+              value: `\`\`\`\n${err}\`\`\``
+            }]
+          })
+          response.edit(embed)
         })
       }
     })
