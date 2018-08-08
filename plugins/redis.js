@@ -9,7 +9,7 @@ e.init = function (Bot) {
     return Bot.util.logger.error('REDIS', err.message)
   })
   r.on('connect', () => {
-    Bot.util.logger.log('REDIS', 'Connected to server')
+    Bot.util.logger.log('REDIS', 'Connected to database')
   })
   Bot.db = r
 }

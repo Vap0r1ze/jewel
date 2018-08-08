@@ -3,6 +3,9 @@ let e = module.exports = {}
 const Discord = require('discord.js')
 const util = require('util')
 
+e.desc = 'Evaluate JS code'
+e.perms = 'Developer'
+
 e.run = async function (msg, args) {
   let code = msg.content.split(' ').splice(1).join(' ')
   let embed = new Discord.RichEmbed()
@@ -47,7 +50,3 @@ e.run = async function (msg, args) {
     }
   }
 }
-
-e.name = 'eval'
-e.desc = 'Evaluate JS code'
-e.perms = 'Developer'
