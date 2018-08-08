@@ -1,6 +1,6 @@
 // Modules
 const EventEmitter = require('events')
-const asink = require('async')
+const _ = require('async')
 const chalk = require('chalk')
 const getFiles = require('./util/getFiles.js')
 
@@ -68,7 +68,7 @@ function initializeFunction (next) {
     next()
 }
 
-asink.waterfall(
+_.waterfall(
   new Array(Bot.plugins.length)
     .fill(initializeFunction),
   function (err) {
