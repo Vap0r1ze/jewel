@@ -9,5 +9,4 @@ config/*
 !config/*.example.*
 
 # Data
-rethinkdb_data
-dumb.rdb
+dump.rdb
