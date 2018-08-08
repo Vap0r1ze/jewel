@@ -1,4 +1,3 @@
-var root = __dirname
 module.exports = function (path) {
 	let fileNames = require('fs').readdirSync(path)
 		.filter(file => file.endsWith('.js') && file.length > 3)

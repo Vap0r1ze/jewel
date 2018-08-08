@@ -54,14 +54,10 @@ function initializeFunction (next) {
       if (res)
         throw res
       else {
-        // Bot.util.logger.log('PLG', 'Initialized '
-        // + chalk.cyan.bold(name))
         next()
       }
     } else {
       plugin.e.init(Bot).then(() => {
-        // Bot.util.logger.log('PLG', 'Initialized '
-        // + chalk.cyan.bold(name))
         next()
       }).catch(err => {
         throw err

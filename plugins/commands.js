@@ -5,6 +5,8 @@ const fs = require('fs')
 e.dependencies = ['discordjs']
 
 e.init = function (Bot) {
+  if (!fs.existsSync('commands'))
+    fs.mkdirSync('commands')
   Bot.client.on('message', msg => {
     if (msg.content.startsWith(process.env.PREFIX)) {
       if (!msg.channel.guild) return
@@ -20,7 +22,7 @@ e.init = function (Bot) {
         if (cmd.database && !Bot.db.connection) return
         Bot.util.logger.cmd(command, msg.author)
         try {
-          if (e.checkperms(Bot, cmd.perms, msg.author)) {
+          if (e.checkperms(cmd.perms, msg.author)) {
             cmd.run.bind(Bot)(msg, args)
           } else {
             msg.channel.send(`You must be a **${cmd.perms}** to do this!`)
@@ -33,7 +35,7 @@ e.init = function (Bot) {
   })
 }
 
-e.checkperms = function (Bot, title, member) {
+e.checkperms = function (title, member) {
   switch (title) {
     case 'Developer':
       return process.env.DEVELOPERS.includes(member.id)

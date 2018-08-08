@@ -13,8 +13,8 @@ e.init = function (Bot) {
     let s
     Bot.util.logger.log('DJS', chalk`Logged in as {cyan.bold ${client.user.username}#${client.user.discriminator}}`)
     s = client.guilds.size
-    Bot.util.logger.log('DJS', chalk`Currently in {green.bold ${s}} guild${s?'s':''}`)
+    Bot.util.logger.log('DJS', chalk`Currently in {green.bold ${s}} guild${s===1?'':'s'}`)
     s = client.channels.size
-    Bot.util.logger.log('DJS', chalk`Currently in {green.bold ${s}} channel${s?'s':''}`)
+    Bot.util.logger.log('DJS', chalk`Currently in {green.bold ${s}} channel${s===1?'':'s'}`)
   })
 }

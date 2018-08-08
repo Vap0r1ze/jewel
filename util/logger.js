@@ -1,27 +1,26 @@
-const chalk = require('chalk');
-const dateFormat = require('dateformat');
+const chalk = require('chalk')
+const dateFormat = require('dateformat')
 
 class Logger {
 	constructor (format) {
-		this.format = format || '[hh:MM:ss TT]';
+		this.format = format || '[hh:MM:ss TT]'
 	}
 	get time () {
 		return dateFormat(new Date(), this.format)
 	}
 	warn (title, desc) {
-		console.log(chalk`${this.time} {bgYellow.white.bold  ${title.toUpperCase()} } ${desc}`);
+		console.log(chalk`${this.time} {bgYellow.white.bold  ${title.toUpperCase()} } ${desc}`)
 	}
 	error (title, error) {
-		console.log(chalk`${this.time} {bgRed.white.bold  ${title.toUpperCase()} } ${error.stack || error.message || error}`);
-		// console.log(error.fileName, error.lineNumber, error.stack)
+		console.log(chalk`${this.time} {bgRed.white.bold  ${title.toUpperCase()} } ${error.stack || error.message || error}`)
 	}
 	log (title, desc) {
-		console.log(chalk`${this.time} {bgGreen.white.bold  ${title.toUpperCase()} } ${desc}`);
+		console.log(chalk`${this.time} {bgGreen.white.bold  ${title.toUpperCase()} } ${desc}`)
 	}
 	cmd (cmd, user) {
 		console.log(chalk`${this.time} {bgGreen.white.bold  CMD } {cyan.bold ${user.username}}`
-			+ chalk` <{green.bold ${user.id}}>: {cyan.bold ${cmd.toLowerCase()}}`);
+			+ chalk` <{green.bold ${user.id}}>: {cyan.bold ${cmd.toLowerCase()}}`)
 	}
 }
 
-module.exports = new Logger();
+module.exports = new Logger()
