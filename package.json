@@ -10,7 +10,9 @@
     "dateformat": "^3.0.3",
     "discord.js": "^11.3.2",
     "dotenv": "^6.0.0",
-    "rethinkdb": "^2.3.3"
+    "moment": "^2.22.2",
+    "redis": "^2.8.0",
+    "superagent": "^3.8.3"
   },
   "devDependencies": {},
   "scripts": {
