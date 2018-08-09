@@ -15,7 +15,7 @@ e.init = function (Bot) {
       if (msg.author.bot) return
       let args = msg.content
         .replace(process.env.PREFIX, '')
-        .split(/\s+/)
+        .split(/ +/)
         .filter(Boolean)
       let command = (args.shift() || '').toLowerCase()
       if (!/^[\w\-]+$/.test(command)) return
