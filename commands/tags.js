@@ -6,8 +6,6 @@ const TagProcessor = require('../services/TagProcessor')
 
 e.aliases = ['tag', 't']
 e.desc = 'Save guild-wide memos with functional tags'
-e.perms = 'Role'
-e.role = 'Tag Creators'
 
 e.run = function (msg, args) {
   let authorID = msg.author.id
@@ -15,6 +13,8 @@ e.run = function (msg, args) {
   if (!args.length) return wrongUsage(msg)
   switch (args[0]) {
     case 'create': {
+      if (!msg.member.roles.some(r => r.name === 'Tag Creators'))
+        return msg.channel.send('You must have the `Tag Creators` role to do this!')
       args.shift()
       let name = args[0]
       if (typeof name === 'string')
