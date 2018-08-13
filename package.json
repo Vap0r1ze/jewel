@@ -1,7 +1,7 @@
 {
   "name": "jewel-v2",
   "version": "1.0.0",
-  "description": "A bot framework for eris.",
+  "description": "A bot framework for discord.js",
   "main": "index.js",
   "dependencies": {
     "async": "^2.6.0",
