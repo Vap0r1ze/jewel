@@ -1,7 +1,7 @@
 {
   "name": "jewel-v2",
   "version": "1.0.0",
-  "description": "A bot framework for discord.js",
+  "description": "An open sourced bot for discord.js",
   "main": "index.js",
   "dependencies": {
     "async": "^2.6.0",
@@ -19,5 +19,10 @@
     "start": "node index.js"
   },
   "author": "Vap0r1ze",
-  "license": "MIT"
+  "license": "MIT",
+  "optionalDependencies": {
+    "pug": "^2.0.3",
+    "sass": "^1.10.4",
+    "webshot": "^0.18.0"
+  }
 }
