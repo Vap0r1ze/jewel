@@ -7,8 +7,5 @@ node_modules
 # Config
 .env
 
-# Bot Stuff
-services
-
 # Data
 dump.rdb

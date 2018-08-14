@@ -9,7 +9,7 @@ const sass = require('sass')
 e.init = function (Bot) {
   Bot.createImage = function (name, ctx = {}, options = {}) {
     Object.assign(ctx, { Bot })
-    let f = path.join(__dirname, `./images/${name}`)
+    let f = path.join(__dirname, `../services/images/${name}`)
     let html = pug.renderFile(`${f}.pug`, ctx)
     let css = ''
     if (fs.existsSync(`${f}.scss`))
@@ -17,7 +17,7 @@ e.init = function (Bot) {
     Object.assign(options, {
       siteType: 'html',
       customCSS: css,
-      phantomPath: 'C:/Users/bb/phantomjs/windows/2.5.0-beta/bin/phantomjs.exe'
+      phantomPath: path.join(__dirname, '../services/phantomjs.exe') // windows 2.5.0-beta
     })
     let img = path.join(__dirname, '../tmp.png')
     return new Promise((resolve, reject) => {
