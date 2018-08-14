@@ -27,7 +27,11 @@ e.init = function (Bot) {
       try {
         let permCheck = e.checkperms(cmd.perms, msg.member, cmd)
         if (permCheck === true) {
-          cmd.run.bind(Bot)(msg, args)
+          let r = cmd.run.bind(Bot)(msg, args)
+          if (r instanceof Promise)
+            r.catch(err => {
+              Bot.util.logger.error(command.toUpperCase(), err)
+            })
         } else {
           msg.channel.send(`You must ${permCheck} to do this!`)
         }
