@@ -9,9 +9,6 @@ node_modules
 
 # Bot Stuff
 services
-commands
-!commands/eval.js
-!commands/ping.js
 
 # Data
 dump.rdb

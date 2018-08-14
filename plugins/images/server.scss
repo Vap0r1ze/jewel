@@ -1,0 +1,19 @@
+$primary: #7289da;
+
+body {
+  border-radius: 8rem;
+  font-family: Arial, sans-serif;
+}
+.server, .no-icon {
+  color: #fff;
+  background: #2f3136;
+}
+.head {
+  background: $primary;
+}
+.members {
+  background: mix(#000, $primary, 5);
+}
+.text-muted {
+  color: rgba(#fff, .5);
+}
