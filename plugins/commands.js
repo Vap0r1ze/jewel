@@ -3,16 +3,15 @@ let e = module.exports = {}
 const fs = require('fs')
 const chalk = require('chalk')
 
-e.dependencies = ['discordjs']
+e.dependencies = ['eris']
 
 e.init = function (Bot) {
   if (!fs.existsSync('commands'))
     fs.mkdirSync('commands')
   let commands = Bot.util.getFiles('commands')
-  Bot.client.on('message', msg => {
+  Bot.client.on('messageCreate', msg => {
     if (msg.content.startsWith(process.env.PREFIX)) {
-      if (!msg.channel.guild) return
-      if (msg.author.bot) return
+      if (!msg.channel.guild || msg.author.bot) return
       let args = msg.content
         .replace(process.env.PREFIX, '')
         .split(/ +/)
@@ -47,10 +46,10 @@ e.checkperms = function (title, member, cmd) {
   switch (title) {
     case 'Developer':
       return process.env.DEVELOPERS.includes(member.id) || 'be a Developer'
-      break
     case 'Role':
-      return member.roles.some(r => r.name === cmd.role) || `have the \`${cmd.role}\` role`
-      break
+      return member.roles.some(r => {
+        return member.guild.roles.get(r).name === cmd.role
+      }) || `have the \`${cmd.role}\` role`
     default:
       return true
   }

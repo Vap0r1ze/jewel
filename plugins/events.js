@@ -3,7 +3,7 @@ let e = module.exports = {}
 const fs = require('fs')
 const chalk = require('chalk')
 
-e.dependencies = ['discordjs']
+e.dependencies = ['eris']
 
 e.init = function (Bot) {
   if (!fs.existsSync('events'))

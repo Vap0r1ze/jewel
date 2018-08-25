@@ -1,6 +1,5 @@
 let e = module.exports = {}
 
-const Discord = require('discord.js')
 const util = require('util')
 
 e.desc = 'Evaluate JS code'
@@ -8,25 +7,32 @@ e.perms = 'Developer'
 
 e.run = async function (msg, args) {
   let code = msg.content.split(' ').splice(1).join(' ')
-  let embed = new Discord.RichEmbed()
+  let embed = {
+    fields: []
+  }
   if (!code) {
     msg.reply('ERROR: **NO CODE TO EVAL**')
     return
   }
   try {
     let output = eval(`${code}`)
-    embed.setTitle('Eval')
-    embed.addField(':inbox_tray: Input', `\`\`\`js\n ${code}\`\`\``, false)
-    embed.addField(`:outbox_tray: Output (${typeof output})`, `\`\`\`js\n ${util.inspect(output)}\`\`\``, false)
-    embed.setColor(0x43b581)
-    msg.channel.send({ embed: embed }).then(response => {
+    embed.title = 'Eval'
+    embed.fields.push({
+      name: ':inbox_tray: Input',
+      value: `\`\`\`js\n ${code}\`\`\``
+    }, {
+      name: `:outbox_tray: Output (${typeof output})`,
+      value: `\`\`\`js\n ${util.inspect(output)}\`\`\``
+    })
+    embed.color = 0x43b581
+    msg.channel.createMessage({ embed }).then(response => {
       if (output && typeof output.then == 'function') {
         output.then(value => {
           Object.assign(embed, { fields: [{
             name: `:gem: Resolved (${typeof value})`,
             value: `\`\`\`js\n${util.inspect(value)}\`\`\``
           }] })
-          response.edit(embed)
+          response.edit({ embed })
         }).catch(err => {
           Object.assign(embed, {
             color: 0xf04747,
@@ -35,18 +41,22 @@ e.run = async function (msg, args) {
               value: `\`\`\`\n${err}\`\`\``
             }]
           })
-          response.edit(embed)
+          response.edit({ embed })
         })
       }
     })
   } catch (err) {
     if (err) {
-      embed.setTitle('Eval Error')
-      if (!(embed.fields || []).length)
-        embed.addField(':inbox_tray: Input', `\`\`\`js\n${code}\`\`\``, false)
-      embed.addField(':outbox_tray: Error', `\`\`\`\n${err}\`\`\``, false)
-      embed.setColor(0xf04747)
-      msg.channel.send({ embed: embed })
+      embed.title = 'Eval Error'
+      embed.fields = [{
+        name: ':inbox_tray: Input',
+        value: `\`\`\`js\n${code}\`\`\``
+      }, {
+        name: ':outbox_tray: Error',
+        value: `\`\`\`\n${err}\`\`\``
+      }]
+      embed.color = 0xf04747
+      msg.channel.createMessage({ embed })
     }
   }
 }
