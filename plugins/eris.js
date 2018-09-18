@@ -11,9 +11,7 @@ e.init = function (Bot) {
   })
   Bot.client.on('ready', () => {
     let g = client.guilds.size
-    // let c = client.channels.size
-    Bot.util.logger.log('DJS', chalk`Logged in as {cyan.bold ${client.user.username}#${client.user.discriminator}}`)
-    Bot.util.logger.log('DJS', chalk`Currently in {green.bold ${g}} guild${g===1?'':'s'}`)
-      // + chalk` and {green.bold ${c}} channel${c===1?'':'s'}`)
+    Bot.util.logger.log('ERIS', chalk`Logged in as {cyan.bold ${client.user.username}#${client.user.discriminator}}`)
+    Bot.util.logger.log('ERIS', chalk`Currently in {green.bold ${g}} guild${g===1?'':'s'}`)
   })
 }
