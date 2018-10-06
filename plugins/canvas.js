@@ -15,25 +15,24 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
   this.closePath()
   return this
 }
-CanvasRenderingContext2D.prototype.wrapText = function (t, x, y, w, lh) {
-  if (!lh)
-    lh = +this.font.match(/(\d+)px/)[1]
-  let ls = t.split('\n')
-  let f = []
+CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, width, lineHeight, maxLines) {
+  if (!lineHeight)
+    lineHeight = +this.font.match(/(\d+)px/)[1]
+  let ls = text.split('\n')
   let ln = 0
   for (let l of ls) {
     let ws = l.split(' ')
     let lwr = 0
     for (let i = 0; i < ws.length; i++) {
-      let wr = ws[i]
+      if (ln >= maxLines) return
       let lw = this.measureText(ws.slice(lwr, i + 1)).width
-      if (lw > w && i + 1 - lwr > 1) {
-        this.fillText(ws.slice(lwr, i).join(' '), x, y + ln * lh)
+      if (lw > width && i + 1 - lwr > 1) {
+        this.fillText(ws.slice(lwr, i).join(' '), x, y + ln * lineHeight)
         lwr = i
         ln++
       }
       if (ws.length - 1 === i) {
-        this.fillText(ws.slice(lwr, i + 1).join(' '), x, y + ln * lh)
+        this.fillText(ws.slice(lwr, i + 1).join(' '), x, y + ln * lineHeight)
         ln++
       }
     }
@@ -43,13 +42,10 @@ CanvasRenderingContext2D.prototype.wrapText = function (t, x, y, w, lh) {
 }
 
 const bg = '#1e293a'
-const textMuted = '#3a5879'
+const textMuted = '#487098'
 
-const peach = '#ffaa77'
-const magenta = '#f600b3'
-const salmon = '#fd7567'
-const turquoise = '#00d3d7'
-const springgreen = '#00feb9'
+const accent1 = '#fa489a'
+const accent2 = '#00eec5'
 
 e.init = function (Bot) {
   registerFont(path.join(__dirname, '../fonts/Lato-Regular.ttf'), {
@@ -101,11 +97,22 @@ e.init = function (Bot) {
       ctx.drawImage(await this.getImage(avatar), -47.5, 0, 345, 345)
       ctx.restore()
 
+      // Status
+      ctx.fillStyle = accent2
+      ctx.shadowColor = textMuted
+      ctx.shadowBlur = 4
+      ctx.beginPath()
+      ctx.arc(525, 22, 3, 0, Math.PI*2)
+      ctx.fill()
+      ctx.shadowBlur = 0
+      ctx.fillStyle = textMuted
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'right'
+      ctx.fillText('online', 515, 21)
+      ctx.textAlign = 'left'
+
       // Username
-      let usernameGrad = ctx.createLinearGradient(0, 30, 0, 50)
-      usernameGrad.addColorStop(0, magenta)
-      usernameGrad.addColorStop(1, salmon)
-      ctx.fillStyle = usernameGrad
+      ctx.fillStyle = accent1
       ctx.font = '800 30px Lato'
       ctx.textBaseline = 'hanging'
       ctx.fillText(user.username, 270, 30)
@@ -117,23 +124,17 @@ e.init = function (Bot) {
       ctx.fillText(user.role, 270, 65)
 
       // Bio
-      let bioGrad = ctx.createLinearGradient(0, 90, 0, 120)
-      bioGrad.addColorStop(0, turquoise)
-      bioGrad.addColorStop(1, springgreen)
-      ctx.fillStyle = bioGrad
+      ctx.fillStyle = accent2
       ctx.font = '500 25px Lato'
       ctx.textBaseline = 'hanging'
       ctx.fillText('Bio', 270, 90)
       ctx.fillStyle = textMuted
       ctx.font = '500 15px Lato'
       ctx.textBaseline = 'hanging'
-      ctx.wrapText(user.bio, 270, 120, 260)
+      ctx.wrapText(user.bio, 270, 120, 260, null, 5)
 
       // Footer
-      let footerGrad = ctx.createLinearGradient(0, 290, 0, 400)
-      footerGrad.addColorStop(0, peach)
-      footerGrad.addColorStop(1, magenta)
-      ctx.fillStyle = footerGrad
+      ctx.fillStyle = accent1
       ctx.beginPath()
       ctx.moveTo(0, 290)
       ctx.lineTo(0, 400)
