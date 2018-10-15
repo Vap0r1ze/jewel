@@ -3,7 +3,7 @@ require('dotenv').config()
 
 // Modules
 const EventEmitter = require('events')
-const _ = require('async')
+const { waterfall } = require('async')
 const chalk = require('chalk')
 const getFiles = require('./util/getFiles.js')
 global.Promise = require('bluebird')
@@ -68,7 +68,7 @@ function initializeFunction (next) {
     next()
 }
 
-_.waterfall(
+waterfall(
   new Array(Bot.plugins.length)
     .fill(initializeFunction),
   function (err) {
