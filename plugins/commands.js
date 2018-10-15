@@ -5,11 +5,11 @@ const chalk = require('chalk')
 
 e.dependencies = ['eris']
 
-e.init = function (Bot) {
+e.init = function () {
   if (!fs.existsSync('commands'))
     fs.mkdirSync('commands')
-  let commands = Bot.util.getFiles('commands')
-  Bot.client.on('messageCreate', msg => {
+  let commands = this.util.getFiles('commands')
+  this.client.on('messageCreate', msg => {
     if (msg.content.startsWith(process.env.PREFIX)) {
       if (!msg.channel.guild || msg.author.bot) return
       let args = msg.content
@@ -21,25 +21,25 @@ e.init = function (Bot) {
       let cmd = commands.find(cmd => [].concat(cmd.name, cmd.e.aliases || []).includes(command))
       if (!cmd) return
       cmd = cmd.e
-      if (cmd.database && !Bot.db) return
-      Bot.util.logger.cmd(`${command} ${args.join(' ')}`, msg.author)
+      if (cmd.database && !this.db) return
+      this.util.logger.cmd(`${command} ${args.join(' ')}`, msg.author)
       try {
         let permCheck = e.checkperms(cmd.perms, msg.member, cmd)
         if (permCheck === true) {
-          let r = cmd.run.bind(Bot)(msg, args)
+          let r = cmd.run.bind(this)(msg, args)
           if (r instanceof Promise)
             r.catch(err => {
-              Bot.util.logger.error(command.toUpperCase(), err)
+              this.util.logger.error(command.toUpperCase(), err)
             })
         } else {
           msg.channel.send(`You must ${permCheck} to do this!`)
         }
       } catch (err) {
-        Bot.util.logger.error('CMD', err)
+        this.util.logger.error('CMD', err)
       }
     }
   })
-  Bot.util.logger.log('CMD', chalk`Listening to commands with prefix {magenta.bold ${process.env.PREFIX}}`)
+  this.util.logger.log('CMD', chalk`Listening to commands with prefix {magenta.bold ${process.env.PREFIX}}`)
 }
 
 e.checkperms = function (title, member, cmd) {

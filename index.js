@@ -51,14 +51,14 @@ function initializeFunction (next) {
   let plugin = plugins.find(p => p.name == name)
   if (plugin.e.init instanceof Function) {
     if (plugin.e.init.constructor === Function) {
-      let res = plugin.e.init(Bot)
+      let res = plugin.e.apply(Bot)
       if (res)
         throw res
       else {
         next()
       }
     } else {
-      plugin.e.init(Bot).then(() => {
+      plugin.e.apply(Bot).then(() => {
         next()
       }).catch(err => {
         throw err
