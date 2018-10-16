@@ -14,16 +14,16 @@ const Bot = new EventEmitter()
 // Utils
 Bot.util = {}
 for (let util of getFiles('./util'))
-  Bot.util[util.name] = util.e
+  Bot.util[util.name] = util.exports
 
 // Plugins
 let plugins = getFiles('./plugins')
 Bot.plugins = []
 function registerPlugin (plugin) {
   if (!Bot.plugins.includes(plugin.name)) {
-    if (plugin.e.dependencies) {
+    if (plugin.exports.dependencies) {
       let depsRegistered = true
-      for (let dep of plugin.e.dependencies) {
+      for (let dep of plugin.exports.dependencies) {
         if (!Bot.plugins.includes(dep)) {
           if (plugins.map(p => p.name).includes(dep))
             registerPlugin(plugins.find(p => p.name === dep))
@@ -49,21 +49,16 @@ plugins.forEach(registerPlugin)
 function initializeFunction (next) {
   let name = Bot.plugins.shift()
   let plugin = plugins.find(p => p.name == name)
-  if (plugin.e.init instanceof Function) {
-    if (plugin.e.init.constructor === Function) {
-      let res = plugin.e.apply(Bot)
-      if (res)
-        throw res
-      else {
+  if (plugin.exports.init instanceof Function) {
+      let res = plugin.exports.init.apply(Bot)
+      if (res && res.constructor.name === 'Promise') {
+        res.then(() => {
+          next()
+        }).catch(err => {
+          throw err
+        })
+      } else
         next()
-      }
-    } else {
-      plugin.e.apply(Bot).then(() => {
-        next()
-      }).catch(err => {
-        throw err
-      })
-    }
   } else
     next()
 }

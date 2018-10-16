@@ -1,5 +1,3 @@
-let e = module.exports = {}
-
 const path = require('path')
 const { createCanvas, Image, registerFont, CanvasRenderingContext2D } = require('canvas')
 
@@ -41,16 +39,7 @@ CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, width, lineH
   return this
 }
 
-e.init = function () {
-  registerFont(path.join(__dirname, '../fonts/Lato-Regular.ttf'), {
-    family: 'Lato',
-    weight: 400
-  })
-  registerFont(path.join(__dirname, '../fonts/Lato-Black.ttf'), {
-    family: 'Lato',
-    weight: 900
-  })
-
+exports.init = function () {
   this.canvas = {
     async getImage (url, timeout = 5000) {
       return new Promise((resolve, reject) => {

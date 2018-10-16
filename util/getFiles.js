@@ -6,7 +6,7 @@ module.exports = function (path) {
 		let ex = require(`../${fpath}`)
 		return {
 			name: file.slice(0, -3),
-			e: ex
+			exports: ex
 		}
 	})
 	return files

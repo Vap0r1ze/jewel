@@ -1,9 +1,7 @@
-let e = module.exports = {}
-
 let Eris = require('eris')
 let chalk = require('chalk')
 
-e.init = function () {
+exports.init = function () {
   let token = process.env.BOT_TOKEN
   let client = this.client = new Eris(token)
   this.on('init', () => {

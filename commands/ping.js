@@ -1,7 +1,11 @@
-let e = module.exports = {}
+const Command = require('../services/Command')
 
-e.desc = 'Ping pong ding dong wow'
-
-e.run = function (msg) {
-  msg.channel.createMessage(`<@${msg.author.id}>, Pong!`)
+class Ping extends Command {
+  get name () {
+    return 'ping'
+  }
+  handle (msg, args) {
+    msg.channel.createMessage(`<@${msg.author.id}>, Pong!`)
+  }
 }
+module.exports = Ping

@@ -1,11 +1,9 @@
-let e = module.exports = {}
-
 const fs = require('fs')
 const chalk = require('chalk')
 
-e.dependencies = ['eris']
+exports.dependencies = ['eris']
 
-e.init = function () {
+exports.init = function () {
   if (!fs.existsSync('events'))
     fs.mkdirSync('events')
   let events = fs.readdirSync('events')
@@ -15,7 +13,7 @@ e.init = function () {
     h += handlers.length
     this.on(event, function (...args) {
       handlers.forEach(h => {
-        h(...args)
+        h.exports(...args)
       })
     })
   }

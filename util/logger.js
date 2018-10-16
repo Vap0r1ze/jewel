@@ -16,7 +16,7 @@ module.exports = {
 		console.log(chalk`${this.time} {bgGreen.white.bold  ${title.toUpperCase()} } ${desc}`)
 	},
 	cmd (cmd, msg) {
-		console.log(chalk`${this.time} {bgGreen.white.bold  CMD } {cyan.bold ${msg.guild.name}} ({cyan.bold ${msg.guild.id}})`
-			+ chalk` > {cyan.bold ${msg.author.username}}  ({green.bold ${msg.author.id}}): ${cmd}`)
+		console.log(chalk`${this.time} {bgGreen.white.bold  CMD } {cyan.bold ${msg.channel.guild.name}} ({green.bold ${msg.channel.guild.id}})`
+			+ chalk` > {cyan.bold ${msg.author.username}} ({green.bold ${msg.author.id}}): ${cmd}`)
 	}
 }

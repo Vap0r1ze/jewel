@@ -1,11 +1,17 @@
-let e = module.exports = {}
+const Command = require('../services/Command')
 
-e.desc = 'Get help with commands'
-
-e.run = async function (msg, args) {
-  let cmds = this.util.getFiles('commands')
-  msg.channel.createMessage([
-    '__**Command List**__',
-    ...cmds.map(c => `\`${c.name}\`  ${c.e.desc || '**missing description**'}`)
-  ].join('\n'))
+class Help extends Command {
+  get name () {
+    return 'help'
+  }
+  get description () {
+    return 'Get help with commands'
+  }
+  handle (msg, args) {
+    msg.channel.createMessage([
+      '__**Command List**__',
+      ...this.commands.map(cmd => `\`${cmd.name}\`  ${cmd.description || '**missing description**'}`)
+    ].join('\n'))
+  }
 }
+module.exports = Help

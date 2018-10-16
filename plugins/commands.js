@@ -1,56 +1,48 @@
-let e = module.exports = {}
-
 const fs = require('fs')
 const chalk = require('chalk')
 
-e.dependencies = ['eris']
+exports.dependencies = ['eris', 'sqlite']
 
-e.init = function () {
+exports.init = function () {
   if (!fs.existsSync('commands'))
     fs.mkdirSync('commands')
-  let commands = this.util.getFiles('commands')
+  let commands = this.commands = []
+  for (let file of this.util.getFiles('commands')) {
+    let command = new file.exports(this)
+    commands.push(command)
+  }
   this.client.on('messageCreate', msg => {
-    if (msg.content.startsWith(process.env.PREFIX)) {
-      if (!msg.channel.guild || msg.author.bot) return
-      let args = msg.content
-        .replace(process.env.PREFIX, '')
+    if (!msg.channel.guild || msg.author.bot) return
+    let guild = this.db.guilds.get(msg.channel.guild.id)
+    let prefix
+    if (msg.content.startsWith(guild.prefix))
+      prefix = guild.prefix
+    else if (msg.content.startsWith(process.env.PREFIX))
+      prefix = process.env.PREFIX
+    if (prefix) {
+      let argsRaw = msg.content
+        .replace(prefix, '')
+      let args = argsRaw
         .split(/ +/)
-        .filter(Boolean)
-      let command = (args.shift() || '').toLowerCase()
-      if (!/^[\w\-]+$/.test(command)) return
-      let cmd = commands.find(cmd => [].concat(cmd.name, cmd.e.aliases || []).includes(command))
-      if (!cmd) return
-      cmd = cmd.e
-      if (cmd.database && !this.db) return
-      this.util.logger.cmd(`${command} ${args.join(' ')}`, msg.author)
-      try {
-        let permCheck = e.checkperms(cmd.perms, msg.member, cmd)
-        if (permCheck === true) {
-          let r = cmd.run.bind(this)(msg, args)
-          if (r instanceof Promise)
-            r.catch(err => {
-              this.util.logger.error(command.toUpperCase(), err)
+      let commandName = args.shift()
+      args.raw = argsRaw.replace(commandName, '').replace(/^ ?/, '')
+      if (!commandName) return
+      commandName = commandName.toLowerCase()
+      let command = commands.find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName))
+      if (command) {
+        try {
+          let result = command.msg(msg, args)
+          if (result instanceof Promise) {
+            result.catch(err => {
+              this.util.logger.error(command.name, err)
             })
-        } else {
-          msg.channel.send(`You must ${permCheck} to do this!`)
+          }
+        } catch (err) {
+          this.util.logger.error(command.name, err)
         }
-      } catch (err) {
-        this.util.logger.error('CMD', err)
+        this.util.logger.cmd(args.raw, msg)
       }
     }
   })
   this.util.logger.log('CMD', chalk`Listening to commands with prefix {magenta.bold ${process.env.PREFIX}}`)
-}
-
-e.checkperms = function (title, member, cmd) {
-  switch (title) {
-    case 'Developer':
-      return process.env.DEVELOPERS.includes(member.id) || 'be a Developer'
-    case 'Role':
-      return member.roles.some(r => {
-        return member.guild.roles.get(r).name === cmd.role
-      }) || `have the \`${cmd.role}\` role`
-    default:
-      return true
-  }
 }
