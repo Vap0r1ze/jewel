@@ -1,7 +1,7 @@
 {
   "name": "jewel-v2",
   "version": "1.0.0",
-  "description": "An open source bot for discord.js",
+  "description": "An open source bot template for eris",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
