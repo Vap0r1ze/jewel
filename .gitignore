@@ -6,6 +6,7 @@ node_modules
 
 # Config
 .env
+pm2.json
 
 # Data
 dump.rdb
