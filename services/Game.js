@@ -151,9 +151,6 @@ class GameSession {
           })
         } else if (this.players.includes(userId)) {
           this.gameHandleLeave(userId)
-          const playerIndex = this.players.indexOf(userId)
-          this.players.splice(playerIndex, 1)
-          this.saveState()
           this.ctx.client.createMessage(this.poolChannelId, {
             embed: {
               color: 0xffc941,

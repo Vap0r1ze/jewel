@@ -290,18 +290,22 @@ class UnoSession extends GameSession {
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
     return this.destroyGame(winner)
   }
-  gameHandleLeave (player) {
+  async gameHandleLeave (player) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
     if (playerIndex < data.turn) {
       data.turn--
     } else if (playerIndex === data.turn) {
+      const nextPlayer = this.wrapTurn(playerIndex + data.rot, this.players.length)
       data.pile.push(...data.hands[player])
       delete data.hands[player]
-      this.broadcastChat(this.players.filter(p => p !== player), `**<@${player}> has left the game**`)
-      this.dmPlayer(playerIndex, '**You have left the game**')
+      this.players.splice(playerIndex, 1)
+      await this.showTable()
+      await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', data.hands[nextPlayer], data.hands[nextPlayer].length)
     }
     this.saveState()
+    await this.broadcastChat(this.players.filter(p => p !== player), `**<@${player}> has left the game**`)
+    await this.dmPlayer(playerIndex, '**You have left the game**')
   }
 }
 
