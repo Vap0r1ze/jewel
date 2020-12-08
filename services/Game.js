@@ -39,6 +39,7 @@ class GameSession {
     this.gameConfig = sessionInfo.gameConfig
     this.host = sessionInfo.host
     this.players = sessionInfo.players
+    this.spectators = sessionInfo.spectators
     this.data = sessionInfo.data
     this.init()
   }
@@ -52,6 +53,7 @@ class GameSession {
       gameConfig: this.gameConfig,
       host: this.host,
       players: this.players,
+      spectators: this.spectators,
       data: this.data
     })
     db.set(`sessions.${this.id}`, sessionInfo)
@@ -62,21 +64,22 @@ class GameSession {
   }
   async broadcastChat (players, message, isChatMsg) {
     const errored = []
-    for (const player of players) {
+    const users = players.concat(this.spectators)
+    for (const user of users) {
       try {
         if (isChatMsg) {
-          const channel = await this.ctx.client.getDMChannel(player)
+          const channel = await this.ctx.client.getDMChannel(user)
           const lastMessage = Array.from(channel.messages)[channel.messages.size - 1]
           if (lastMessage && lastMessage[1].content.split('\n')[0] === message.split('\n')[0])
             await channel.createMessage(message.split('\n').slice(1).join('\n'))
           else
             await channel.createMessage(message)
         } else {
-          await this.dmPlayer(player, message)
+          await this.dmPlayer(user, message)
         }
       } catch (error) {
         console.log(error)
-        errored.push(player)
+        errored.push(user)
       }
     }
     return errored.length && errored
@@ -106,22 +109,34 @@ class GameSession {
     const db = this.ctx.getDB('games')
     switch (option) {
       case 'join': {
-        if (!this.players.includes(userId)) {
-          const sessions = db.get('sessions') || {}
-          for (const sessionInfo of Object.values(sessions)) {
-            if (sessionInfo.players.includes(userId)) {
-              return this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, You're already in a game session,`
-                + ` you can't join another game! (${sessionInfo.gameName} #${sessionInfo.id})`)
-            }
+        if (userId === this.host) return
+        const sessions = db.get('sessions') || {}
+        for (const sessionInfo of Object.values(sessions)) {
+          if (sessionInfo.players.includes(userId)) {
+            return this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, You're already in a game session,`
+              + ` you can't join another game! (${sessionInfo.gameName} #${sessionInfo.id})`)
           }
-          this.players.push(userId)
-          this.saveState()
-          this.ctx.client.createMessage(this.poolChannelId, {
-            embed: {
-              color: 0x41acff,
-              description: `<@${userId}> has joined <@${this.host}>'s game of **${this.game.displayName}**`
-            }
-          })
+        }
+
+        if (!this.players.includes(userId)) {
+          if (this.gameState === 'PREGAME') {
+            this.players.push(userId)
+            this.saveState()
+            this.ctx.client.createMessage(this.poolChannelId, {
+              embed: {
+                color: 0x41acff,
+                description: `<@${userId}> has joined <@${this.host}>'s game of **${this.game.displayName}**`
+              }
+            })
+          } else if (!this.spectators.includes(userId)) {
+            this.spectators.push(userId)
+            this.saveState()
+            this.ctx.client.createMessage(this.poolChannelId, {
+              embed: {
+                description: `<@${userId}> has started spectating <@${this.host}>'s game of **${this.game.displayName}**`
+              }
+            })
+          }
         }
         break
       }
@@ -153,6 +168,15 @@ class GameSession {
                   description: `<@${this.host}>'s game of **${this.game.displayName}** has ended since too many players left`
                 }
               })
+            }
+          })
+        } else if (this.spectators.includes(userId)) {
+          const userIndex = this.spectators.indexOf(userId)
+          this.spectators.splice(userIndex, 1)
+          this.saveState()
+          this.ctx.client.createMessage(this.poolChannelId, {
+            embed: {
+              description: `<@${userId}> has stopped spectating <@${this.host}>'s game of **${this.game.displayName}**`
             }
           })
         }
@@ -189,6 +213,9 @@ class GameSession {
         break
       }
     }
+  }
+  handleSpectatorDM (msg) {
+    return this.chatMessage(msg)
   }
 }
 
@@ -257,6 +284,7 @@ class GameCommand extends Command {
           gameConfig: this.game.defaultConfig,
           host: authorId,
           players: [ authorId ],
+          spectators: [],
           data: {},
         }
         this.game.createSession(sessionInfo)

@@ -18,7 +18,7 @@ class Uno extends Game {
     return 0xcf4347
   }
   get playerRange () {
-    return [2, 6]
+    return [2, 12]
   }
   get defaultConfig () {
     return {

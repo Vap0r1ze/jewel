@@ -3,10 +3,13 @@ module.exports = function (msg) {
   const db = this.getDB('games')
   const sessions = db.get('sessions') || {}
   for (const sessionInfo of Object.values(sessions)) {
-    if (sessionInfo.players.includes(msg.author.id)) {
-      const session = this.gameSessions[sessionInfo.id]
-      if (session.gameState === 'INPROGRESS')
+    const session = this.gameSessions[sessionInfo.id]
+    if (session.gameState === 'INPROGRESS') {
+      if (session.players.includes(msg.author.id)) {
         session.handleDM(msg)
+      } else if (session.spectators.includes(msg.author.id)) {
+        session.handleSpectatorDM(msg)
+      }
     }
   }
 }

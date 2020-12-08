@@ -4,7 +4,7 @@ Game
 [ ] add game status command
 [ ] fix in-game message grouping
 [ ] add in-game message attachments
-[ ] add spectators
+[x] add spectators
 
 Uno
 [ ] add house rules
