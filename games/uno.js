@@ -290,6 +290,19 @@ class UnoSession extends GameSession {
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
     return this.destroyGame(winner)
   }
+  gameHandleLeave (player) {
+    const { data } = this
+    const playerIndex = this.players.indexOf(player)
+    if (playerIndex < data.turn) {
+      data.turn--
+    } else if (playerIndex === data.turn) {
+      data.pile.push(...data.hands[player])
+      delete data.hands[player]
+      this.broadcastChat(this.players.filter(p => p !== player), `**<@${player}> has left the game**`)
+      this.dmPlayer(playerIndex, '**You have left the game**')
+    }
+    this.saveState()
+  }
 }
 
 module.exports = Uno
