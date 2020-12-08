@@ -243,10 +243,10 @@ class UnoSession extends GameSession {
     const { data } = this
     const deck = deckRef.shuffleIndexes()
     data.hands = {}
-    for (let i = data.players.length; i > 0; i--) { // shuffle players
+    for (let i = this.players.length; i > 0; i--) { // shuffle players
       const j = Math.floor(Math.random() * i)
-      const p = data.players.splice(j, 1)[0]
-      data.players.push(p)
+      const p = this.players.splice(j, 1)[0]
+      this.players.push(p)
     }
     for (const player of this.players) {
       const hand = deck.splice(-this.gameConfig.handSize, this.gameConfig.handSize)
