@@ -1,12 +1,11 @@
 class Command {
   constructor (ctx) {
-    Object.assign(this, ctx)
-    if (!this.name)
-      throw new Error('Command does not have a name')
+    this.ctx = ctx
     this.init()
   }
   msg (msg, args) {
     if (this.developer && !process.env.DEVELOPERS.includes(msg.author.id)) return
+    if (!process.env.CHANNEL_WHITELIST.includes(msg.channel.id)) return
     this.handle(msg, args)
   }
   get name () {}

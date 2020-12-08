@@ -7,6 +7,7 @@ const { waterfall } = require('async')
 const chalk = require('chalk')
 const getFiles = require('./util/getFiles.js')
 global.Promise = require('bluebird')
+require('json5/lib/register')
 
 // Bot Object
 const Bot = new EventEmitter()

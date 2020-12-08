@@ -7,10 +7,11 @@ class Help extends Command {
   get description () {
     return 'Get help with commands'
   }
-  handle (msg, args) {
+  handle (msg) {
+    const visibleCommands = Object.values(this.ctx.commands).filter(cmd => !cmd.developer && cmd.name !== 'help')
     msg.channel.createMessage([
       '__**Command List**__',
-      ...this.commands.map(cmd => `\`${cmd.name}\`  ${cmd.description || '**missing description**'}`)
+      ...visibleCommands.map(cmd => `\`${cmd.name}\`  ${cmd.description || '**missing description**'}`)
     ].join('\n'))
   }
 }
