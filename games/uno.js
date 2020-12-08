@@ -154,6 +154,8 @@ class UnoSession extends GameSession {
       const cmd = msg.content.replace(/^[.,] */i, '')
       const hand = data.hands[player]
       switch (cmd) {
+        case 'skip':
+        case 'pickup':
         case 'draw': {
           if (this.players.indexOf(player) === data.turn) {
             const [ cardIndex ] = await this.drawCards(1)
@@ -296,16 +298,18 @@ class UnoSession extends GameSession {
     if (playerIndex < data.turn) {
       data.turn--
     } else if (playerIndex === data.turn) {
-      const nextPlayer = this.wrapTurn(playerIndex + data.rot, this.players.length)
+      console.log(playerIndex, data.rot, this.players.length)
+      const nextPlayer = this.players[this.wrapTurn(playerIndex + data.rot, this.players.length)]
       data.pile.push(...data.hands[player])
       delete data.hands[player]
       this.players.splice(playerIndex, 1)
       await this.showTable()
+      console.log(data.hands)
       await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', data.hands[nextPlayer], data.hands[nextPlayer].length)
     }
     this.saveState()
     await this.broadcastChat(this.players.filter(p => p !== player), `**<@${player}> has left the game**`)
-    await this.dmPlayer(playerIndex, '**You have left the game**')
+    await this.dmPlayer(player, '**You have left the game**')
   }
 }
 

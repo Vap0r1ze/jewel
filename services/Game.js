@@ -62,12 +62,13 @@ class GameSession {
     const channel = await this.ctx.client.getDMChannel(player)
     return await channel.createMessage(message)
   }
-  async broadcastChat (players, message, isChatMsg) {
+  async broadcastChat (players, message, chatSrc) {
     const errored = []
     const users = players.concat(this.spectators)
     for (const user of users) {
       try {
-        if (isChatMsg) {
+        if (chatSrc) {
+          if (chatSrc === user) continue
           const channel = await this.ctx.client.getDMChannel(user)
           const lastMessage = Array.from(channel.messages)[channel.messages.size - 1]
           if (lastMessage && lastMessage[1].content.split('\n')[0] === message.split('\n')[0])
@@ -87,7 +88,10 @@ class GameSession {
   chatMessage (msg) {
     const userId = msg.author.id
     const others = this.players.filter(p => p !== userId)
-    return this.broadcastChat(others, `> **${msg.author.username}**\n> ${msg.content.slice(0,1900)}`, true)
+    let displayName = `**${msg.author.username}**`
+    if (this.spectators.includes(userId))
+      displayName += ' [Spectator]'
+    return this.broadcastChat(others, `> ${displayName}\n> ${msg.content.slice(0,1900)}`, msg.author.id)
   }
   async destroyGame (winnerId) {
     const db = this.ctx.getDB('games')
@@ -150,7 +154,11 @@ class GameSession {
             }
           })
         } else if (this.players.includes(userId)) {
-          this.gameHandleLeave(userId)
+          if (this.gameState !== 'PREGAME')
+            this.gameHandleLeave(userId)
+          else
+            this.players.splice(this.players.indexOf(userId), 1)
+          this.saveState()
           this.ctx.client.createMessage(this.poolChannelId, {
             embed: {
               color: 0xffc941,
@@ -187,13 +195,23 @@ class GameSession {
                 const p = this.players.length
                 this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, you cannot start the game with only ${p} player${p===1?'':'s'}!`)
               } else {
-                this.ctx.client.createMessage(this.poolChannelId, {
-                  embed: {
-                    color: 0x43b581,
-                    description: `<@${userId}>'s game of **${this.game.displayName}** has just started! Have fun players!`
-                  }
+                this.broadcastChat(this.players, '**The game has started**').then(() => {
+                  this.ctx.client.createMessage(this.poolChannelId, {
+                    embed: {
+                      color: 0x43b581,
+                      description: `<@${userId}>'s game of **${this.game.displayName}** has just started! Have fun players!`
+                    }
+                  })
+                  this.startGame()
+                }).catch(error => {
+                  this.ctx.util.logger.error('GAME', error)
+                  this.ctx.client.createMessage(this.poolChannelId, {
+                    embed: {
+                      color: 0xFF0000,
+                      description: `<@${userId}>'s game of **${this.game.displayName}** had trouble starting. Make sure everybody's DMs are open!`
+                    }
+                  })
                 })
-                this.startGame()
               }
               break
             }
@@ -231,87 +249,127 @@ class GameCommand extends Command {
     const db = this.ctx.getDB('games')
     const sessions = db.get('sessions') || {}
     for (const sessionInfo of Object.values(sessions)) {
-      if (sessionInfo.players.includes(msg.author.id)) {
+      if (sessionInfo.players.includes(msg.author.id) || sessionInfo.spectators.includes(msg.author.id)) {
         return sessionInfo
       }
     }
   }
   handle (msg, args) {
-    const { GAME_JOIN_EMOJI, GAME_LEAVE_EMOJI, GAME_START_EMOJI, GAME_CONFIG_EMOJI, GAME_CHANNEL_WHITELIST, PREFIX } = process.env
+    const { GAME_JOIN_EMOJI, GAME_LEAVE_EMOJI, GAME_START_EMOJI, GAME_CONFIG_EMOJI, GAME_CHANNEL_WHITELIST, PREFIX, DEVELOPERS } = process.env
     const authorId = msg.author.id
     if (!GAME_CHANNEL_WHITELIST.includes(msg.channel.id)) return
 
-    if ((args[0] || '').toLowerCase() === 'help') {
-      return msg.channel.createMessage({
-        embed: Object.assign({
-          color: this.game.color,
-          title: `${this.game.displayName} help`,
-          footer: { text: `Requires ${this.game.playerRange.join('-')} players | Start a game with ${PREFIX}${this.name}` }
-        }, this.game.helpEmbed)
-      })
-    }
-
-    let sessionInfo = this.checkHostForSession(msg)
-    if (sessionInfo)
-      return msg.channel.createMessage(`<@${msg.author.id}>, You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`)
-
-    msg.channel.createMessage({
-      embed: {
-        color: this.game.color,
-        title: 'Creating game...',
-        footer: { text: `Game: ${this.game.displayName}` }
-      }
-    }).then(poolMsg => {
-      sessionInfo = this.checkHostForSession(msg)
-      if (sessionInfo) {
-        poolMsg.edit({
-          embed: {
-            color: 0xFF0000,
-            title: 'Could not create game.',
-            description: `You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`
-          }
-        })
-      } else {
-        sessionInfo = {
-          id: shortid(),
-          poolMsgId: poolMsg.id,
-          poolChannelId: poolMsg.channel.id,
-          gameName: this.game.name,
-          gameState: 'PREGAME',
-          gameConfig: this.game.defaultConfig,
-          host: authorId,
-          players: [ authorId ],
-          spectators: [],
-          data: {},
-        }
-        this.game.createSession(sessionInfo)
-        poolMsg.edit({
-          content: `<@${authorId}>`,
-          embed: {
+    switch ((args.shift() || '').toLowerCase()) {
+      case 'help': {
+        return msg.channel.createMessage({
+          embed: Object.assign({
             color: this.game.color,
-            title: 'Game created!',
-            description: [
-              `React with <:${GAME_JOIN_EMOJI}> to join and <:${GAME_LEAVE_EMOJI}> to leave. The game host can start/pause the game with <:${GAME_START_EMOJI}>.`,
-              `The game host can also change the configuration by reacting with <:${GAME_CONFIG_EMOJI}>.`
-            ].join('\n'),
-            footer: {
-              text: `Requires ${this.game.playerRange.join('-')} players`
+            title: `${this.game.displayName} help`,
+            footer: { text: `Requires ${this.game.playerRange.join('-')} players | Start a game with ${PREFIX}${this.name}` }
+          }, this.game.helpEmbed)
+        })
+        break
+      }
+      case 'kick': {
+        const sessionInfo = this.checkHostForSession(msg)
+        if (sessionInfo && (sessionInfo.host === authorId || DEVELOPERS.includes(authorId))) {
+          const session = this.ctx.gameSessions[sessionInfo.id]
+          const match = /(?:<@!?)?(\d+)>?/.exec(args[0])
+          if (match) {
+            const player = match[1]
+            if (session.players.includes(player)) {
+              if (session.gameState !== 'PREGAME')
+                session.gameHandleLeave(player)
+              else
+                session.players.splice(session.players.indexOf(player), 1)
+              session.saveState()
+              this.ctx.client.createMessage(session.poolChannelId, {
+                embed: {
+                  color: 0xffc941,
+                  description: `<@${userId}> has been kicked from <@${session.host}>'s game of **${session.game.displayName}**`
+                }
+              }).then(() => {
+                if (session.players.length < session.game.playerRange[0] && session.gameState !== 'PREGAME') {
+                  session.destroyGame()
+                  this.ctx.client.createMessage(session.poolChannelId, {
+                    embed: {
+                      color: 0xff5441,
+                      description: `<@${session.host}>'s game of **${session.game.displayName}** has ended since there aren't enough players to continue`
+                    }
+                  })
+                }
+              })
             }
           }
-        })
-        this.ctx.createMenu({
-          channelId: poolMsg.channel.id,
-          messageId: poolMsg.id,
-          emojis: {
-            join: GAME_JOIN_EMOJI,
-            leave: GAME_LEAVE_EMOJI,
-            start: GAME_START_EMOJI,
-            config: GAME_CONFIG_EMOJI
-          },
-          handlerPath: `gameSessions.${sessionInfo.id}.handlePoolReact`
-        })
+          return msg.channel.createMessage(`<@${authorId}>, I could not find that user in your session.`)
+        }
+        break
       }
-    })
+      default: {
+        let sessionInfo = this.checkHostForSession(msg)
+        if (sessionInfo)
+          return msg.channel.createMessage(`<@${msg.author.id}>, You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`)
+
+        msg.channel.createMessage({
+          embed: {
+            color: this.game.color,
+            title: 'Creating game...',
+            footer: { text: `Game: ${this.game.displayName}` }
+          }
+        }).then(poolMsg => {
+          sessionInfo = this.checkHostForSession(msg)
+          if (sessionInfo) {
+            poolMsg.edit({
+              embed: {
+                color: 0xFF0000,
+                title: 'Could not create game.',
+                description: `You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`
+              }
+            })
+          } else {
+            sessionInfo = {
+              id: shortid(),
+              poolMsgId: poolMsg.id,
+              poolChannelId: poolMsg.channel.id,
+              gameName: this.game.name,
+              gameState: 'PREGAME',
+              gameConfig: this.game.defaultConfig,
+              host: authorId,
+              players: [ authorId ],
+              spectators: [],
+              data: {},
+            }
+            this.game.createSession(sessionInfo)
+            poolMsg.edit({
+              content: `<@${authorId}>`,
+              embed: {
+                color: this.game.color,
+                title: 'Game created!',
+                description: [
+                  `React with <:${GAME_JOIN_EMOJI}> to join and <:${GAME_LEAVE_EMOJI}> to leave. The game host can start/pause the game with <:${GAME_START_EMOJI}>.`,
+                  `The game host can also change the configuration by reacting with <:${GAME_CONFIG_EMOJI}>.`
+                ].join('\n'),
+                footer: {
+                  text: `Requires ${this.game.playerRange.join('-')} players`
+                }
+              }
+            })
+            this.ctx.createMenu({
+              channelId: poolMsg.channel.id,
+              messageId: poolMsg.id,
+              emojis: {
+                join: GAME_JOIN_EMOJI,
+                leave: GAME_LEAVE_EMOJI,
+                start: GAME_START_EMOJI,
+                config: GAME_CONFIG_EMOJI
+              },
+              handlerPath: `gameSessions.${sessionInfo.id}.handlePoolReact`
+            })
+          }
+        })
+        break
+      }
+    }
   }
 }
 

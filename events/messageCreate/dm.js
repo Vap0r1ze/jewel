@@ -1,5 +1,5 @@
 module.exports = function (msg) {
-  if (msg.channel.type !== 1 || msg.author.bot) return
+  if (msg.channel.type !== 1 || msg.type !== 0 || msg.author.bot) return
   const db = this.getDB('games')
   const sessions = db.get('sessions') || {}
   for (const sessionInfo of Object.values(sessions)) {
