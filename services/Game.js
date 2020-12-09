@@ -42,6 +42,7 @@ class GameSession {
     this.players = sessionInfo.players
     this.spectators = sessionInfo.spectators
     this.data = sessionInfo.data
+    this.dmWarned = []
     this.init()
   }
   get viewers () {
@@ -67,7 +68,9 @@ class GameSession {
     return await channel.createMessage(message)
   }
   async broadcastChat (users, message, chatSrc) {
+    const errored = []
     for (const user of users) {
+      try {
         if (chatSrc) {
           if (chatSrc === user) continue
           const channel = await this.ctx.client.getDMChannel(user)
@@ -79,6 +82,16 @@ class GameSession {
         } else {
           await this.dmPlayer(user, message)
         }
+      } catch (error) {
+        if (!this.spectators.includes(user)) throw error
+        if (!this.dmWarned.includes(user))
+          errored.push(user)
+      }
+    }
+    if (errored.length) {
+      this.dmWarned.push(...errored)
+      const mentions = errored.map(u => `<@${u}>`)
+      this.ctx.client.createMessage(this.poolChannelId, `${mentions.join(' ')}, I am unable to DM you`)
     }
   }
   chatMessage (msg) {
