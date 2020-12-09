@@ -274,16 +274,10 @@ class UnoSession extends GameSession {
     await this.showPlayerCards(curPlayer, 'It\'s your turn! Here is your hand', data.hands[curPlayer], data.hands[curPlayer].length)
   }
   pauseGame () {
-    const { data } = this
-    this.gameState = 'PAUSED'
-    this.saveState()
-    this.broadcastChat(this.players, '**Game paused by host**')
+    // const { data } = this
   }
   resumeGame () {
-    const { data } = this
-    this.gameState = 'INPROGRESS'
-    this.saveState()
-    this.broadcastChat(this.players, '**Game resumed by host**')
+    // const { data } = this
   }
   async winGame (winner) {
     const { data } = this

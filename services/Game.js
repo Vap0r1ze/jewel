@@ -215,11 +215,11 @@ class GameSession {
               break
             }
             case 'INPROGRESS': {
-              this.pauseGame()
+              this.pauseSession()
               break
             }
             case 'PAUSED': {
-              this.resumeGame()
+              this.resumeSession()
               break
             }
           }
@@ -227,6 +227,18 @@ class GameSession {
         break
       }
     }
+  }
+  pauseSession () {
+    this.pauseGame()
+    this.gameState = 'PAUSED'
+    this.saveState()
+    this.broadcastChat(this.players, '**Game paused by host**')
+  }
+  resumeSession () {
+    this.resumeGame()
+    this.gameState = 'INPROGRESS'
+    this.saveState()
+    this.broadcastChat(this.players, '**Game resumed by host**')
   }
   handleSpectatorDM (msg) {
     return this.chatMessage(msg)
