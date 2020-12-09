@@ -5,13 +5,13 @@ class Ping extends Command {
     return 'ping'
   }
   get description () {
-    return 'check the delay between the bot and discord'
+    return 'Check the latency between the bot and discord'
   }
-  handle (msg, args) {
+  handle (msg) {
     const before = Date.now()
-    msg.channel.createMessage(`<@${msg.author.id}>, Ping?`).then(ping => {
+    msg.channel.createMessage('Ping?').then(ping => {
       const after = Date.now()
-      ping.edit(`<@${msg.author.id}>, Pong! **${after - before}ms**`)
+      ping.edit(`Ping! \`${after - before}ms\``)
     })
   }
 }

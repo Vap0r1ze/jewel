@@ -8,7 +8,10 @@ class Eval extends Command {
   get description () {
     return 'Evaluate JS code'
   }
-  get developer () {
+  get usage () {
+    return '(code)'
+  }
+  get isDeveloper () {
     return true
   }
   handle (msg, args) {

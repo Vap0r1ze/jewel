@@ -8,6 +8,9 @@ class Remind extends Command {
   get description () {
     return 'set a reminder in seconds'
   }
+  get isDeveloper () {
+    return true
+  }
   fulfillReminder ({ userId, channelId, seconds, info }, isLate) {
     const pretense = isLate
       ? 'Earlier'

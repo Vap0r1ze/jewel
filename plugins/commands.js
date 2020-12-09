@@ -34,7 +34,8 @@ exports.init = function () {
         } catch (err) {
           this.util.logger.error(`CMD:${command.name}`, err)
         }
-        this.util.logger.cmd(msg.content, msg)
+        if (!command.isSilent)
+          this.util.logger.cmd(msg.content, msg)
       }
     }
   })

@@ -312,6 +312,9 @@ class GameCommand extends Command {
     super(ctx)
     this.game = game
   }
+  get category () {
+    return 'Games'
+  }
   get description () {
     return `start a game of ${this.game.name}`
   }

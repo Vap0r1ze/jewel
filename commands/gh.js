@@ -7,6 +7,9 @@ class GitHub extends Command {
   get aliases () {
     return ['source','code','gh']
   }
+  get isHidden () {
+    return true
+  }
   get description () {
     return 'Get a link to the sourcecode of this bot'
   }

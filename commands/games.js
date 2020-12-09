@@ -4,8 +4,11 @@ class games extends Command {
   get name () {
     return 'games'
   }
+  get category () {
+    return 'Games'
+  }
   get description () {
-    return 'List all the registered games'
+    return 'List all of the registered games'
   }
   handle (msg) {
     msg.channel.createMessage({
