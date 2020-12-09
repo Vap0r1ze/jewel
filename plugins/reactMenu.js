@@ -19,9 +19,11 @@ exports.init = function () {
     })
   }
 
-  this.deleteMenu = messageId => {
+  this.deleteMenu = (messageId, channelId) => {
     delete menus[messageId]
     db.delete(messageId)
+    if (channelId)
+      this.client.removeMessageReactions(channelId, messageId).catch(() => {})
   }
 
   const menus = this.menus = {}

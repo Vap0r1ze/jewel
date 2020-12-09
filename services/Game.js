@@ -97,7 +97,7 @@ class GameSession {
   }
   async destroyGame (winnerId) {
     const db = this.ctx.getDB('games')
-    this.ctx.deleteMenu(this.poolMsgId)
+    this.ctx.deleteMenu(this.poolMsgId, this.poolChannelId)
     db.delete(`sessions.${this.id}`)
     delete this.ctx.gameSessions[this.id]
     if (this.gameState !== 'PREGAME')
