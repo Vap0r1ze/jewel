@@ -48,6 +48,15 @@ class GameSession {
   get viewers () {
     return this.players.concat(this.spectators)
   }
+
+  gameHandleJoin () {}
+  gameHandleLeave () {}
+  gameHandleDestroy () {}
+  startGame () {}
+  pauseGame () {}
+  resumeGame () {}
+  winGame () {}
+
   init () {
     const db = this.ctx.getDB('games')
   }
@@ -156,6 +165,7 @@ class GameSession {
       }
       case 'leave': {
         if (userId === this.host) {
+          this.gameHandleDestroy()
           this.destroyGame()
           this.ctx.client.createMessage(this.poolChannelId, {
             embed: {
@@ -179,6 +189,7 @@ class GameSession {
             }
           }).then(() => {
             if (this.players.length < this.game.playerRange[0] && this.gameState !== 'PREGAME') {
+              this.gameHandleDestroy()
               this.destroyGame()
               this.ctx.client.createMessage(this.poolChannelId, {
                 embed: {
