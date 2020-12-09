@@ -290,16 +290,14 @@ class UnoSession extends GameSession {
   async gameHandleLeave (player) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
+    data.pile.push(...data.hands[player])
+    delete data.hands[player]
     if (playerIndex < data.turn) {
       data.turn--
     } else if (playerIndex === data.turn) {
-      console.log(playerIndex, data.rot, this.players.length)
       const nextPlayer = this.players[this.wrapTurn(playerIndex + data.rot, this.players.length)]
-      data.pile.push(...data.hands[player])
-      delete data.hands[player]
       this.players.splice(playerIndex, 1)
       await this.showTable()
-      console.log(data.hands)
       await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', data.hands[nextPlayer], data.hands[nextPlayer].length)
     }
     this.saveState()
