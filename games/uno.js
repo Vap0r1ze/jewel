@@ -140,6 +140,7 @@ class UnoSession extends GameSession {
       pile.push(c)
     }
     data.deck.unshift(...pile)
+    data.pile = [data.pile[0]]
     // await this.broadcastChat(this.players, {
     //   embed: {
     //     description: 'The deck has ran out of cards, and the pile has been shuffled into the deck'
