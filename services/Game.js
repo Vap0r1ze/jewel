@@ -62,9 +62,8 @@ class GameSession {
     const channel = await this.ctx.client.getDMChannel(player)
     return await channel.createMessage(message)
   }
-  async broadcastChat (players, message, chatSrc) {
+  async broadcastChat (users, message, chatSrc) {
     const errored = []
-    const users = players.concat(this.spectators)
     for (const user of users) {
       try {
         if (chatSrc) {
@@ -87,7 +86,7 @@ class GameSession {
   }
   chatMessage (msg) {
     const userId = msg.author.id
-    const others = this.players.filter(p => p !== userId)
+    const others = this.players.concat(this.spectators).filter(p => p !== userId)
     let displayName = `**${msg.author.username}**`
     if (this.spectators.includes(userId))
       displayName += ' [Spectator]'
