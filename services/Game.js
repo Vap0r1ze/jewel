@@ -43,6 +43,9 @@ class GameSession {
     this.data = sessionInfo.data
     this.init()
   }
+  get viewers () {
+    return this.players.concat(this.spectators)
+  }
   init () {
     const db = this.ctx.getDB('games')
   }
@@ -86,10 +89,10 @@ class GameSession {
   }
   chatMessage (msg) {
     const userId = msg.author.id
-    const others = this.players.concat(this.spectators).filter(p => p !== userId)
+    const others = this.viewers.filter(p => p !== userId)
     let displayName = `**${msg.author.username}**`
     if (this.spectators.includes(userId))
-      displayName += ' [Spectator]'
+      displayName += ' **__Spectator__**'
     return this.broadcastChat(others, `> ${displayName}\n> ${msg.content.slice(0,1900)}`, msg.author.id)
   }
   async destroyGame (winnerId) {
