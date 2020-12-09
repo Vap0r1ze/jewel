@@ -8,7 +8,7 @@ Job
   - id: String
   - when: String - can be cron format, or an ISO formatted date
   - handlerPath: String - path to job handler from bot context
-  - data: Object - data to pass to the handler upon execution
+  - data: JSON - data to pass to the handler upon execution
 
 Session
   - id: ShortId
