@@ -112,7 +112,7 @@ class UnoSession extends GameSession {
     }
     const d = data.deck.length
     const p = data.pile.length
-    return this.broadcastChat(this.players, {
+    return this.broadcastChat(this.viewers, {
       embed: {
         color: cardColors[data.pileColor[0]],
         description: comment,
@@ -303,8 +303,6 @@ class UnoSession extends GameSession {
       await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', data.hands[nextPlayer], data.hands[nextPlayer].length)
     }
     this.saveState()
-    await this.broadcastChat(this.players.filter(p => p !== player), `**<@${player}> has left the game**`)
-    await this.dmPlayer(player, '**You have left the game**')
   }
 }
 
