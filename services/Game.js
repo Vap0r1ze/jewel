@@ -55,7 +55,6 @@ class GameSession {
   startGame () {}
   pauseGame () {}
   resumeGame () {}
-  winGame () {}
 
   init () {
     const db = this.ctx.getDB('games')
