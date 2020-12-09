@@ -1,6 +1,6 @@
 const { Game, GameSession } = require('../services/Game')
 const Deck = require('../services/Deck')
-const deckData = require('../services/gameData/uno.deck.json5')
+const deckData = require('../services/data/uno.deck.json5')
 const deckRef = Deck.from(deckData.deck)
 
 const cardSelPattern = /^(r(?:ed)?|y(?:ellow)?|g(?:reen)?|b(?:lue)?) *([0-9]|skip|reverse|\+2|wild(?: *\+4)?)$/i
