@@ -324,7 +324,7 @@ class GameCommand extends Command {
     const sessionEmbed = {
       color: this.game.color,
       description: [
-        `React with <:${GAME_JOIN_EMOJI}> to join and <:${GAME_LEAVE_EMOJI}> to leave. The game host can start/pause the game with <:${GAME_START_EMOJI}>.`,
+        `React with <:${GAME_JOIN_EMOJI}> to join, <:${GAME_LEAVE_EMOJI}> to leave, or <:${GAME_SPECTATE_EMOJI}> to spectate. The game host can start/pause the game with <:${GAME_START_EMOJI}>.`,
         `The game host can also change the configuration by reacting with <:${GAME_CONFIG_EMOJI}>.`
       ].join('\n'),
       footer: {
