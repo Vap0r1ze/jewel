@@ -59,7 +59,7 @@ class UnoSession extends GameSession {
       embed: {
         title: pretense,
         description: serializedHand.join(' | '),
-        footer: handSize && { text: `You have ${handSize} card${handSize===1?'':'s'}` }
+        footer: handSize && { text: `You have ${handSize} card${handSize===1?'':'s'} | Only you can see this message` }
       }
     })
   }
