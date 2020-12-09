@@ -23,7 +23,7 @@ class Command {
 
   meColor (msg) {
     const meMember = msg.channel.guild.members.get(this.ctx.client.user.id)
-    const meRoles = meMember.roles.map(r => msg.channel.guild.roles.get(r))
+    const meRoles = meMember.roles.map(r => msg.channel.guild.roles.get(r)).reverse()
     const meColor = (meRoles.find(r => r.color) || {color:0}).color
     return meColor
   }
