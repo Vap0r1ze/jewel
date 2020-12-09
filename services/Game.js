@@ -118,7 +118,8 @@ class GameSession {
       })
     }
   }
-  async handlePoolReact (option, userId) {
+  async handlePoolReact (option, userId, removed) {
+    if (removed) return
     const db = this.ctx.getDB('games')
     switch (option) {
       case 'join': {
