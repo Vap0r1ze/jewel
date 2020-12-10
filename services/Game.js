@@ -353,16 +353,6 @@ class GameCommand extends Command {
       }
     }
     switch ((args.shift() || '').toLowerCase()) {
-      case 'help': {
-        return msg.channel.createMessage({
-          embed: Object.assign({
-            color: this.game.color,
-            title: `${this.game.displayName} help`,
-            footer: { text: `Requires ${this.game.playerRange.join('-')} players | Start a game with ${PREFIX}${this.name}` }
-          }, this.game.helpEmbed)
-        })
-        break
-      }
       case 'kick': {
         const sessionInfo = this.checkHostForSession(msg)
         if (sessionInfo && (sessionInfo.host === authorId || DEVELOPERS.includes(authorId))) {
@@ -433,7 +423,7 @@ class GameCommand extends Command {
         })
         break
       }
-      default: {
+      case 'start': {
         let sessionInfo = this.checkHostForSession(msg)
         if (sessionInfo)
           return msg.channel.createMessage(`<@${msg.author.id}>, You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`)
@@ -488,6 +478,15 @@ class GameCommand extends Command {
           }
         })
         break
+      }
+      default: {
+        return msg.channel.createMessage({
+          embed: Object.assign({
+            color: this.game.color,
+            title: `${this.game.displayName} help`,
+            footer: { text: `Requires ${this.game.playerRange.join('-')} players | Start a game with "${PREFIX}${this.name} start"` }
+          }, this.game.helpEmbed)
+        })
       }
     }
   }
