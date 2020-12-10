@@ -20,6 +20,7 @@ exports.init = function () {
   }
 
   this.deleteMenu = (messageId, channelId) => {
+    if (!messageId) return
     delete menus[messageId]
     db.delete(messageId)
     if (channelId)
