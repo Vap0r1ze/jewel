@@ -43,6 +43,7 @@ class GameSession {
     this.spectators = sessionInfo.spectators
     this.data = sessionInfo.data
     this.dmWarned = []
+    this.lastChatMsg = {}
     this.init()
   }
   get viewers () {
@@ -81,12 +82,19 @@ class GameSession {
       try {
         if (chatSrc) {
           if (chatSrc === user) continue
+          if (!this.lastChatMsg[chatSrc])
+            this.lastChatMsg[chatSrc] = {}
+          console.log(this.lastChatMsg, chatSrc, user)
           const channel = await this.ctx.client.getDMChannel(user)
           const lastMessage = Array.from(channel.messages)[channel.messages.size - 1]
-          if (lastMessage && lastMessage[1].content.split('\n')[0] === message.split('\n')[0])
-            await channel.createMessage(message.split('\n').slice(1).join('\n'))
+          console.log(lastMessage)
+          let chatMsg
+          if (lastMessage && this.lastChatMsg[chatSrc][user] === lastMessage[0])
+            chatMsg = await channel.createMessage(message.split('\n').slice(1).join('\n'))
           else
-            await channel.createMessage(message)
+            chatMsg = await channel.createMessage(message)
+          this.lastChatMsg[chatSrc][user] = chatMsg.id
+          console.log(this.lastChatMsg, chatSrc, user)
         } else {
           await this.dmPlayer(user, message)
         }
