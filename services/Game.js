@@ -227,7 +227,7 @@ class GameSession {
                 this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, you cannot start the game with only ${p} player${p===1?'':'s'}!`)
               } else {
                 this.isOpen = false
-                this.broadcastChat(this.players, '**The game has started**').then(() => {
+                this.broadcastChat(this.players, '**The game is starting**').then(() => {
                   this.ctx.client.createMessage(this.poolChannelId, {
                     embed: {
                       color: 0x43b581,
