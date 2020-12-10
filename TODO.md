@@ -11,4 +11,4 @@ Uno
 [ ] add hints
 
 CAH
-[ ] do initial things
+[x] do initial things
