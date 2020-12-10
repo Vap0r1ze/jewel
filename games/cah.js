@@ -407,6 +407,7 @@ class CAHSession extends GameSession {
   async gameHandleLeave (player) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
+    if (playerIndex === -1) return
     const oldCzarIndex = data.czar
     if (playerIndex < oldCzarIndex) {
       data.czar--
@@ -417,7 +418,7 @@ class CAHSession extends GameSession {
       data.czarMsg = ''
       this.clearChoices()
     }
-    data.whilePile.push(...data.hands[player])
+    data.whitePile.push(...data.hands[player])
     delete data.hands[player]
     delete data.scores[player]
     this.players.splice(playerIndex, 1)
