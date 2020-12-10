@@ -287,9 +287,14 @@ class UnoSession extends GameSession {
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
     return this.destroyGame(winner)
   }
+  gameHandleJoin (player) {
+    this.players.push(player)
+    this.saveState()
+  }
   async gameHandleLeave (player) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
+    if (playerIndex === -1) return
     data.pile.push(...data.hands[player])
     delete data.hands[player]
     if (playerIndex < data.turn) {
@@ -300,6 +305,7 @@ class UnoSession extends GameSession {
       await this.showTable()
       await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', data.hands[nextPlayer], data.hands[nextPlayer].length)
     }
+    this.players.splice(playerIndex, 1)
     this.saveState()
   }
 }
