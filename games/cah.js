@@ -21,7 +21,7 @@ class CAH extends Game {
     return 0xEEEEEE
   }
   get playerRange () {
-    return [2, 10]
+    return [3, 10]
   }
   get defaultConfig () {
     return {
