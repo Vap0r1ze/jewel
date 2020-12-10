@@ -51,7 +51,7 @@ exports.init = function () {
       return id in this.store
     },
     cancel (id) {
-      if (id in this.store) {
+      if (this.store[id]) {
         this.store[id].cancel()
         this._unloadFromId(id)
         return true
