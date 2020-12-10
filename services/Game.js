@@ -84,17 +84,14 @@ class GameSession {
           if (chatSrc === user) continue
           if (!this.lastChatMsg[chatSrc])
             this.lastChatMsg[chatSrc] = {}
-          console.log(this.lastChatMsg, chatSrc, user)
           const channel = await this.ctx.client.getDMChannel(user)
           const lastMessage = Array.from(channel.messages)[channel.messages.size - 1]
-          console.log(lastMessage)
           let chatMsg
           if (lastMessage && this.lastChatMsg[chatSrc][user] === lastMessage[0])
             chatMsg = await channel.createMessage(message.split('\n').slice(1).join('\n'))
           else
             chatMsg = await channel.createMessage(message)
           this.lastChatMsg[chatSrc][user] = chatMsg.id
-          console.log(this.lastChatMsg, chatSrc, user)
         } else {
           await this.dmPlayer(user, message)
         }
