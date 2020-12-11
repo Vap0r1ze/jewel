@@ -386,6 +386,7 @@ class CAHSession extends GameSession {
     data.choiceMsgs = {}
     data.scores = Object.fromEntries(this.players.map(p => [p, 0]))
     this.gameState = 'INPROGRESS'
+    this.isOpen = true
     this.saveState()
     return this.startPlayerPeriod('First round started!')
   }
