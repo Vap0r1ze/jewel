@@ -79,6 +79,10 @@ class GameSession {
   async broadcastChat (users, message, chatSrc) {
     const errored = []
     for (const user of users) {
+      if (!user) {
+        this.ctx.util.logger.warn('GAME', 'undefined user passed to GameSession#broadcastChat')
+        continue
+      }
       try {
         if (chatSrc) {
           if (chatSrc === user) continue
@@ -148,7 +152,7 @@ class GameSession {
         if (!this.players.includes(userId)) {
           if (this.isOpen) {
             if (this.gameState !== 'PREGAME') {
-              await this.gameHandleJoin()
+              await this.gameHandleJoin(userId)
               await this.broadcastChat(this.viewers.filter(p => p !== userId), `**<@${userId}> has joined the game**`)
               await this.dmPlayer(userId, '**You have joined the game**')
             } else {

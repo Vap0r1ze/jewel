@@ -430,7 +430,7 @@ class CAHSession extends GameSession {
   }
   gameHandleDestroy () {
     const { data } = this
-    for (const [, msgId ] of Object.entries(data.choiceMsgs))
+    for (const [, msgId ] of Object.entries(data.choiceMsgs || {}))
       this.ctx.deleteMenu(msgId)
     this.ctx.deleteMenu(data.czarMsg)
     this.ctx.jobs.cancel(`${this.id}:playerStart`)
