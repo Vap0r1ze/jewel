@@ -1,6 +1,5 @@
 const Command = require('./Command')
 const shortid = require('shortid')
-const { queue } = require('async')
 
 class Game {
   constructor (ctx) {
