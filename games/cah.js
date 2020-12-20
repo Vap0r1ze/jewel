@@ -284,8 +284,8 @@ class CAHSession extends GameSession {
     const { data } = this
     const { maxPoints } = this.gameConfig
     const czarCard = blackDeckRef[data.czarCard]
-    this.ctx.jobs.cancel(`gameSessions.${this.id}.warnCzar`)
-    this.ctx.jobs.cancel(`gameSessions.${this.id}.endCzarPeriod`)
+    this.ctx.jobs.cancel(`${this.id}:czarWarn`)
+    this.ctx.jobs.cancel(`${this.id}:czarEnd`)
     if (!selected) {
       const oldCzar = this.players[data.czar]
       const oldCzarCard = blackDeckRef[data.czarCard]
