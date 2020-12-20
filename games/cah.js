@@ -307,6 +307,7 @@ class CAHSession extends GameSession {
     } else {
       const selectedCards = data.playerChoices[selected].map(i => data.hands[selected][i])
       for (const [ player, choices ] of Object.entries(data.playerChoices)) {
+        if (!this.players.includes(player)) continue
         const cards = choices.map(i => data.hands[player][i])
         data.hands[player] = data.hands[player].filter(c => !cards.includes(c))
         data.whitePile.push(...cards)
