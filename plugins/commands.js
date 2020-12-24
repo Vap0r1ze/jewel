@@ -1,46 +1,41 @@
 const fs = require('fs')
 const chalk = require('chalk')
 
-exports.dependencies = ['eris', 'sqlite']
+exports.dependencies = ['eris', 'db', 'jobs']
 
 exports.init = function () {
   if (!fs.existsSync('commands'))
     fs.mkdirSync('commands')
-  let commands = this.commands = []
-  for (let file of this.util.getFiles('commands')) {
-    let command = new file.exports(this)
-    commands.push(command)
+  const commands = this.commands = {}
+  for (const file of this.util.getFiles('commands')) {
+    const command = new file.exports(this)
+    commands[command.name] = command
   }
   this.client.on('messageCreate', msg => {
     if (!msg.channel.guild || msg.author.bot) return
-    let guild = this.db.guilds.get(msg.channel.guild.id)
-    let prefix
-    if (msg.content.startsWith(guild.prefix))
-      prefix = guild.prefix
-    else if (msg.content.startsWith(process.env.PREFIX))
-      prefix = process.env.PREFIX
-    if (prefix) {
-      let argsRaw = msg.content
-        .replace(prefix, '')
-      let args = argsRaw
+    if (msg.content.startsWith(process.env.PREFIX)) {
+      const argsRaw = msg.content
+        .replace(process.env.PREFIX, '')
+      const args = argsRaw
         .split(/ +/)
       let commandName = args.shift()
       args.raw = argsRaw.replace(commandName, '').replace(/^ ?/, '')
       if (!commandName) return
       commandName = commandName.toLowerCase()
-      let command = commands.find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName))
+      const command = Object.values(commands).find(cmd => cmd.name === commandName || cmd.aliases.includes(commandName))
       if (command) {
         try {
           let result = command.msg(msg, args)
           if (result instanceof Promise) {
             result.catch(err => {
-              this.util.logger.error(command.name, err)
+              this.util.logger.error(`CMD:${command.name}`, err)
             })
           }
         } catch (err) {
-          this.util.logger.error(command.name, err)
+          this.util.logger.error(`CMD:${command.name}`, err)
         }
-        this.util.logger.cmd(args.raw, msg)
+        if (!command.isSilent)
+          this.util.logger.cmd(msg.content, msg)
       }
     }
   })

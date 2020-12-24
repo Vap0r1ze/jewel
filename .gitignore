@@ -3,11 +3,11 @@
 
 # Packages
 node_modules
-package-lock.json
 
 # Config
 .env
+pm2.json
 
 # Data
 dump.rdb
-data.sqlite
+json.sqlite
