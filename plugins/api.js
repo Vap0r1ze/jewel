@@ -1,8 +1,11 @@
 const chalk = require('chalk')
 const fastify = require('fastify')
+const cors = require('fastify-cors')
 
 exports.init = function () {
   const api = this.api = fastify()
+
+  api.register(cors)
 
   api.get('/', (request, reply) => {
     reply.type('application/json').code(200)
