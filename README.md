@@ -3,22 +3,22 @@ An open-source Discord bot that I often use as a framework to kick-start my bot 
 
 # Todo
 General
-- [ ] please for the love of god rewrite this project in typescript i cant handle the mindless type errors
+- ⬜ please for the love of god rewrite this project in typescript i cant handle the mindless type errors
 
 Game
-- [ ] add config changer
-- [ ] add commands to go along with menu
-- [x] add game status command
-- [x] fix in-game message grouping
-- [ ] add in-game message attachments
-- [x] add spectators
-- [ ] add session timeouts
+- ⬜ add config changer
+- ⬜ add commands to go along with menu
+- ✔️ add game status command
+- ✔️ fix in-game message grouping
+- ⬜ add in-game message attachments
+- ✔️ add spectators
+- ⬜ add session timeouts
 
 Uno
-- [ ] add house rules
-- [ ] add hints
+- ⬜ add house rules
+- ⬜ add hints
 
 CAH
-- [x] do initial things
-- [ ] add expansion packs
-- [ ] add blank cards
+- ✔️ do initial things
+- ⬜ add expansion packs
+- ⬜ add blank cards
