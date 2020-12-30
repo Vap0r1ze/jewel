@@ -2,7 +2,6 @@ const moment = require('moment')
 const { Game, GameSession } = require('../services/Game')
 const Deck = require('../services/Deck')
 const baseDeck = require('../services/data/cah-base.deck.json5')
-const { select } = require('async')
 const whiteDeckRef = Deck.from(baseDeck.white)
 const blackDeckRef = Deck.from(baseDeck.black)
 
@@ -30,6 +29,7 @@ class CAH extends Game {
       czarPeriod: 90,
       warnPeriod: 15,
       maxPoints: 10,
+      packs: [0],
     }
   }
   get Session () {
@@ -66,7 +66,7 @@ class CAHSession extends GameSession {
   async handlePlayerChoice (choice, player, removed) {
     const { data } = this
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
     const choiceMsdId = data.choiceMsgs[player]
     const playerChoices = data.playerChoices[player]
     const hand = data.hands[player]
@@ -106,7 +106,7 @@ class CAHSession extends GameSession {
     if (removed) return
     const { data } = this
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
 
     this.ctx.jobs.cancel(`${this.id}:czarWarn`)
     this.ctx.jobs.cancel(`${this.id}:czarEnd`)
@@ -123,7 +123,7 @@ class CAHSession extends GameSession {
     const { playerPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
 
     const s = blankCount === 1 ? '' : 's'
     const a = blankCount === 1 ? 'a ' : ''
@@ -186,7 +186,7 @@ class CAHSession extends GameSession {
     const { data } = this
     const { warnPeriod } = this.gameConfig
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
     const s = blankCount === 1 ? '' : 's'
 
     for (const [ player, playerChoices ] of Object.entries(data.playerChoices)) {
@@ -197,7 +197,7 @@ class CAHSession extends GameSession {
   async endPlayerPeriod (isLate) {
     const { data } = this
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
     const choiceCount = Object.values(data.playerChoices).filter(c => c.length === blankCount).length
     const s = blankCount === 1 ? '' : 's'
 
@@ -236,7 +236,7 @@ class CAHSession extends GameSession {
     const { czarPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
 
     const s = blankCount === 1 ? '' : 's'
     const candidates = Object.keys(data.playerChoices).filter(p => data.playerChoices[p].length === blankCount)
@@ -276,7 +276,7 @@ class CAHSession extends GameSession {
     const { warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = blackDeckRef[data.czarCard]
-    const blankCount = this.getBlankCount(czarCard)
+    const blankCount = czarCard.pick
     const s = blankCount === 1 ? '' : 's'
     return this.dmPlayer(czar, { embed: { description: `You have ${warnPeriod} seconds to select the best card${s}` } })
   }
@@ -289,7 +289,7 @@ class CAHSession extends GameSession {
     if (!selected) {
       const oldCzar = this.players[data.czar]
       const oldCzarCard = blackDeckRef[data.czarCard]
-      const blankCount = this.getBlankCount(oldCzarCard)
+      const blankCount = oldCzarCard.pick
       const s = blankCount === 1 ? '' : 's'
       data.czarCard = this.drawCards(data.blackDeck, data.blackPile, 1)[0]
       data.czar = this.wrapTurn(data.czar + 1, this.players.length)
@@ -362,8 +362,13 @@ class CAHSession extends GameSession {
     const { data } = this
     const { handSize } = this.gameConfig
     data.hands = {}
-    data.whiteDeck = whiteDeckRef.indexes
-    data.blackDeck = blackDeckRef.indexes
+    data.whiteDeck = []
+    data.blackDeck = []
+    this.gameConfig.packs.forEach(packIndex => {
+      const pack = baseDeck.packs[packIndex]
+      data.whiteDeck.push(...pack.white)
+      data.blackDeck.push(...pack.black)
+    })
     data.whitePile = []
     data.blackPile = []
     for (let i = data.whiteDeck.length; i > 0; i--) { // Shuffle white deck
@@ -453,7 +458,7 @@ class CAHSession extends GameSession {
     for (const [, msgId ] of Object.entries(data.choiceMsgs))
       this.ctx.deleteMenu(msgId)
     data.choiceMsgs = {}
-    }
+  }
   drawCards (deck, pile, amount) {
     const drawn = []
     for (let i = 0; i < amount; i++) {
@@ -470,38 +475,18 @@ class CAHSession extends GameSession {
     }
     return drawn
   }
-  getBlankCount (blackCard) {
-    let c = 0
-    for (const line of blackCard) {
-      for (const sect of line) {
-        if (typeof sect === 'object' && !sect.text)
-          c++
-      }
-    }
-    return c
-  }
   stringifyBlack (blackCard, whiteCards = []) {
-    const lines = []
-    let i = 0
-    for (const line of blackCard) {
-      lines.unshift('')
-      for (const sect of line) {
-        if (typeof sect === 'object' && !sect.text) {
-          if (whiteCards[i])
-            lines[0] += this.ctx.util.text(whiteCards[i], sect.transform, sect.style, 'em')
-          else
-            lines[0] += '\\_'.repeat(5)
-          i++
-        } else if (sect.text) {
-          const t = this.ctx.util.text(sect.text, sect.transform, sect.style)
-          lines[0] += t
-        } else if (typeof sect === 'string') {
-          lines[0] += sect
-        }
-      }
+    const underscoreCount = (blackCard.text.match(/_/g) || []).length
+    let text = blackCard.text
+    if (underscoreCount !== blackCard.pick) {// underscoreCount = 0
+      text = blackCard.pick === 1
+        ? `${blackCard.text} _`
+        : blackCard.text + '\n_'.repeat(blackCard.pick)
     }
-    lines.reverse()
-    return lines.join('\n')
+    whiteCards.forEach(whiteCard => {
+      text = text.replace('_', `**${whiteCard}**`)
+    })
+    return text
   }
 }
 
