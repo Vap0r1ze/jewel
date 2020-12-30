@@ -6,6 +6,7 @@ const EventEmitter = require('events')
 const { waterfall } = require('async')
 const chalk = require('chalk')
 const getFiles = require('./util/getFiles.js')
+const { resolve } = require('path')
 global.Promise = require('bluebird')
 require('json5/lib/register')
 
@@ -14,11 +15,11 @@ const Bot = new EventEmitter()
 
 // Utils
 Bot.util = {}
-for (let util of getFiles('./util'))
+for (let util of getFiles(resolve(__dirname, './util')))
   Bot.util[util.name] = util.exports
 
 // Plugins
-let plugins = getFiles('./plugins')
+let plugins = getFiles(resolve(__dirname, './plugins'))
 Bot.plugins = []
 function registerPlugin (plugin) {
   if (!Bot.plugins.includes(plugin.name)) {

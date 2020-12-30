@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+const { resolve } = require('path')
 
 exports.dependencies = ['events', 'commands']
 
@@ -6,7 +7,7 @@ exports.init = function () {
   const db = this.getDB('games')
 
   const games = this.games = {}
-  for (const file of this.util.getFiles('games')) {
+  for (const file of this.util.getFiles(resolve(__dirname, '../games'))) {
     const game = new file.exports(this)
     games[game.name] = game
     this.commands[game.command.name] = game.command

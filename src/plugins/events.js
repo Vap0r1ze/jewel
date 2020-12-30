@@ -1,16 +1,18 @@
 const fs = require('fs')
+const { resolve } = require('path')
 const chalk = require('chalk')
 
 exports.dependencies = ['eris']
 
 exports.init = function () {
   const self = this
-  if (!fs.existsSync('events'))
-    fs.mkdirSync('events')
-  const events = fs.readdirSync('events')
+  const eventsPath = resolve(__dirname, '../events')
+  if (!fs.existsSync(eventsPath))
+    fs.mkdirSync(eventsPath)
+  const events = fs.readdirSync(eventsPath)
   const evtHandlers = this.evtHandlers = []
   for (const event of events) {
-    const handlers = this.util.getFiles(`events/${event}`)
+    const handlers = this.util.getFiles(resolve(__dirname, `../events/${event}`))
     evtHandlers.push(...handlers.map(h => ({ event, handler: h.exports })))
     if (handlers.length) {
       this.client.on(event, function () {

@@ -1,13 +1,15 @@
 const fs = require('fs')
 const chalk = require('chalk')
+const { resolve } = require('path')
 
 exports.dependencies = ['eris', 'db', 'jobs']
 
 exports.init = function () {
-  if (!fs.existsSync('commands'))
-    fs.mkdirSync('commands')
+  const cmdsPath = resolve(__dirname, '../commands')
+  if (!fs.existsSync(cmdsPath))
+    fs.mkdirSync(cmdsPath)
   const commands = this.commands = {}
-  for (const file of this.util.getFiles('commands')) {
+  for (const file of this.util.getFiles(cmdsPath)) {
     const command = new file.exports(this)
     commands[command.name] = command
   }
