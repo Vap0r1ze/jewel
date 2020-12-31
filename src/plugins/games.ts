@@ -34,12 +34,15 @@ export default function registerGames(this: Bot) {
 
   const gameSessions: Dict<GameSession> = {}
   const sessions: Dict<SessionInfoBasic> = db.get('sessions') || {}
-  Object.values(sessions).forEach(sessionInfo => {
-    if (!sessionInfo) return
-    const game = games[sessionInfo.gameName]
-    if (!game) return
-    game.createSession(sessionInfo)
-  })
+  setTimeout(() => {
+    // game.createSession will fail trying to access bot.gameSessions
+    Object.values(sessions).forEach(sessionInfo => {
+      if (!sessionInfo) return
+      const game = games[sessionInfo.gameName]
+      if (!game) return
+      game.createSession(sessionInfo)
+    })
+  }, 0)
 
   const g = Object.values(games).length
   const s = Object.values(gameSessions).length
