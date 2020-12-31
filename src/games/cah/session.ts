@@ -7,6 +7,7 @@ const letterEmoji: string[] = [] // regional indicators
 for (let i = 0; i < 26; i += 1) { letterEmoji.push(String.fromCharCode(0xd83c, 0xdde6 + i)) }
 
 export interface CAHData {
+  initialized: boolean;
   hands: Dict<number[]>;
   whiteDeck: number[];
   blackDeck: number[];
@@ -23,7 +24,13 @@ export interface CAHData {
 export default class CAHSession extends GameSession {
   gameConfig!: import('@/games/cah/game').default['defaultConfig']
 
-  data!: CAHData
+  data!: CAHData | {}
+
+  // Type Guard
+  dataIsReady(data: CAHData | {}): data is CAHData {
+    if ('initialized' in data) return data.initialized
+    return false
+  }
 
   // Events
   async handleDM(msg: Message) {
@@ -46,6 +53,7 @@ export default class CAHSession extends GameSession {
 
   async handlePlayerChoice(choice: string, player: string, removed?: boolean) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const choiceMsdId = data.choiceMsgs[player]
@@ -89,6 +97,7 @@ export default class CAHSession extends GameSession {
   handleCzarChoice(choice: string, czar: string, removed?: boolean) {
     if (removed) return
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
 
@@ -107,6 +116,7 @@ export default class CAHSession extends GameSession {
   // Routine
   async startPlayerPeriod(title?: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { playerPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
@@ -177,6 +187,7 @@ export default class CAHSession extends GameSession {
 
   async warnPlayers() {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { warnPeriod } = this.gameConfig
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
@@ -191,6 +202,7 @@ export default class CAHSession extends GameSession {
 
   async endPlayerPeriod() {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const choiceCount = Object.values(data.playerChoices)
@@ -233,6 +245,7 @@ export default class CAHSession extends GameSession {
 
   async startCzarPeriod() {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { czarPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
@@ -280,18 +293,20 @@ export default class CAHSession extends GameSession {
     this.ctx.jobs.create(`${this.id}:czarEnd`, endTime, `gameSessions.${this.id}.endCzarPeriod`)
   }
 
-  warnCzar() {
+  async warnCzar() {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const s = blankCount === 1 ? '' : 's'
-    return this.dmPlayer(czar, { embed: { description: `You have ${warnPeriod} seconds to select the best card${s}` } })
+    await this.dmPlayer(czar, { embed: { description: `You have ${warnPeriod} seconds to select the best card${s}` } })
   }
 
   async endCzarPeriod(selected?: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { maxPoints } = this.gameConfig
     const czarCard = baseDeck.black[data.czarCard]
     this.ctx.jobs.cancel(`${this.id}:czarWarn`)
@@ -386,18 +401,26 @@ export default class CAHSession extends GameSession {
 
   // Hooks
   startGame() {
-    const { data } = this
+    const data: CAHData = {
+      initialized: true,
+      hands: {},
+      whiteDeck: [],
+      blackDeck: [],
+      whitePile: [],
+      blackPile: [],
+      czarCard: -1,
+      czar: 0,
+      czarMsg: '',
+      playerChoices: {},
+      choiceMsgs: {},
+      scores: Object.fromEntries(this.players.map(p => [p, 0])),
+    }
     const { handSize } = this.gameConfig
-    data.hands = {}
-    data.whiteDeck = []
-    data.blackDeck = []
     this.gameConfig.packs.forEach(packIndex => {
       const pack = baseDeck.packs[packIndex]
       data.whiteDeck.push(...pack.white)
       data.blackDeck.push(...pack.black)
     })
-    data.whitePile = []
-    data.blackPile = []
     for (let i = data.whiteDeck.length; i > 0; i -= 1) { // Shuffle white deck
       const j = Math.floor(Math.random() * i)
       const [c] = data.whiteDeck.splice(j, 1)
@@ -413,11 +436,7 @@ export default class CAHSession extends GameSession {
       data.hands[player] = hand
     })
     data.czarCard = data.blackDeck.pop() || -1
-    data.czar = 0
-    data.czarMsg = ''
-    data.playerChoices = {}
-    data.choiceMsgs = {}
-    data.scores = Object.fromEntries(this.players.map(p => [p, 0]))
+    this.data = data
     this.gameState = 'INPROGRESS'
     this.isOpen = true
     this.saveState()
@@ -434,6 +453,7 @@ export default class CAHSession extends GameSession {
 
   async gameHandleJoin(player: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const { handSize } = this.gameConfig
     this.players.push(player)
     const drawn = this.drawCards(data.whiteDeck, data.whitePile, handSize)
@@ -444,6 +464,7 @@ export default class CAHSession extends GameSession {
 
   async gameHandleLeave(player: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const playerIndex = this.players.indexOf(player)
     if (playerIndex === -1) return
     const oldCzarIndex = data.czar
@@ -471,8 +492,10 @@ export default class CAHSession extends GameSession {
 
   gameHandleDestroy() {
     const { data } = this
-    Object.values(data.choiceMsgs).forEach(msgId => this.ctx.menus.delete(msgId || ''))
-    this.ctx.menus.delete(data.czarMsg)
+    if (this.dataIsReady(data)) {
+      Object.values(data.choiceMsgs).forEach(msgId => this.ctx.menus.delete(msgId || ''))
+      this.ctx.menus.delete(data.czarMsg)
+    }
     this.ctx.jobs.cancel(`${this.id}:playerStart`)
     this.ctx.jobs.cancel(`${this.id}:playerWarn`)
     this.ctx.jobs.cancel(`${this.id}:playerEnd`)
@@ -488,6 +511,7 @@ export default class CAHSession extends GameSession {
 
   clearChoices(menuOnly?: boolean) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     if (!menuOnly) { data.playerChoices = {} }
     Object.values(data.choiceMsgs).forEach(msgId => this.ctx.menus.delete(msgId || ''))
     data.choiceMsgs = {}

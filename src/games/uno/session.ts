@@ -12,19 +12,24 @@ const colorNames = {
 }
 
 export interface UnoData {
+  initialized: boolean;
   hands: Dict<number[]>;
-  pile: number[];
+  deck: number[]; // deck sorted bottom to top
+  pile: number[]; // pile sorted top to bottom
   pileColor: 'r' | 'y' | 'g' | 'b';
-  deck: number[];
   turn: number;
-  rot: number;
-
+  rot: number; // rotation: 1 = CW | -1 = CCW
 }
 
 export default class UnoSession extends GameSession {
   gameConfig!: import('@/games/uno/game').default['defaultConfig']
 
-  data!: UnoData
+  data!: UnoData | {}
+
+  dataIsReady(data: UnoData | {}): data is UnoData {
+    if ('initialized' in data) return data.initialized
+    return false
+  }
 
   wrapTurn(turn: number, p: number) {
     return turn - Math.floor(turn / p) * p
@@ -53,8 +58,9 @@ export default class UnoSession extends GameSession {
   }
 
   // TODO: condense this maybe?
-  announceCardPlay(cardIndex: number, player: string, nextPlayer: string) {
+  async announceCardPlay(cardIndex: number, player: string, nextPlayer: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const card = deckData.deck[cardIndex]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     const curPlayer = this.players[data.turn]
@@ -89,11 +95,12 @@ export default class UnoSession extends GameSession {
     }
     comment += `\n\nIt is now <@${curPlayer}>'s turn!`
 
-    return this.showTable(comment)
+    await this.showTable(comment)
   }
 
-  showTable(comment?: string) {
+  async showTable(comment?: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const card = deckData.deck[data.pile[0]]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     let outComment = comment
@@ -104,7 +111,7 @@ export default class UnoSession extends GameSession {
     }
     const d = data.deck.length
     const p = data.pile.length
-    return this.broadcastChat(this.viewers, {
+    await this.broadcastChat(this.viewers, {
       embed: {
         color: cardColors[data.pileColor],
         description: outComment,
@@ -116,6 +123,7 @@ export default class UnoSession extends GameSession {
 
   async drawCards(amount = 1) {
     const { data } = this
+    if (!this.dataIsReady(data)) return []
     const drawn = []
     for (let i = 0; i < amount; i += 1) {
       if (data.deck.length === 0) { await this.shufflePileIntoDeck() }
@@ -126,6 +134,7 @@ export default class UnoSession extends GameSession {
 
   async shufflePileIntoDeck() {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const pile = data.pile.splice(1)
     for (let i = pile.length; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * i)
@@ -144,6 +153,7 @@ export default class UnoSession extends GameSession {
 
   async handleDM(msg: Message) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const player = msg.author.id
     await this.chatMessage(msg)
     if (/^[.,] */i.test(msg.content)) {
@@ -258,27 +268,31 @@ export default class UnoSession extends GameSession {
   }
 
   async startGame() {
-    const { data } = this
-    const deck = Deck.shuffleIndexes(deckData.deck)
-    data.hands = {}
+    const data: UnoData = {
+      initialized: true,
+      hands: {},
+      deck: [],
+      pile: [],
+      turn: 0,
+      rot: 1,
+      pileColor: 'r',
+    }
+    data.deck.push(...Deck.shuffleIndexes(deckData.deck))
     for (let i = this.players.length; i > 0; i -= 1) { // shuffle players
       const j = Math.floor(Math.random() * i)
       const [p] = this.players.splice(j, 1)
       this.players.push(p)
     }
     this.players.forEach(player => {
-      const hand = deck.splice(-this.gameConfig.handSize, this.gameConfig.handSize)
+      const hand = data.deck.splice(-this.gameConfig.handSize, this.gameConfig.handSize)
       data.hands[player] = hand
     })
-    data.pile = [deck.pop() || -1] // pile sorted top to bottom
+    data.pile = [data.deck.pop() || -1]
     if (deckData.deck[data.pile[0]].type.startsWith('wild')) {
       data.pileColor = 'rygb'[Math.floor(Math.random() * 4)] as UnoData['pileColor']
     } else {
       data.pileColor = deckData.deck[data.pile[0]].color[0] as UnoData['pileColor']
     }
-    data.deck = deck // deck sorted bottom to top
-    data.turn = 0
-    data.rot = 1 // rotation: 1 = CW | -1 = CCW
     this.gameState = 'INPROGRESS'
     this.saveState()
     // eslint-disable-next-line no-restricted-syntax
@@ -303,10 +317,11 @@ export default class UnoSession extends GameSession {
 
   async winGame(winner: string) {
     const { data } = this
+    if (!this.dataIsReady(data)) return
     const card = deckData.deck[data.pile[0]]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
-    return this.destroyGame(winner)
+    await this.destroyGame(winner)
   }
 
   gameHandleJoin(player: string) {
@@ -317,20 +332,22 @@ export default class UnoSession extends GameSession {
   async gameHandleLeave(player: string) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
-    if (playerIndex === -1) return
-    const hand = data.hands[player]
-    if (hand) {
-      data.pile.push(...hand)
-      delete data.hands[player]
-    }
-    if (playerIndex < data.turn) {
-      data.turn -= 1
-    } else if (playerIndex === data.turn) {
-      const nextPlayer = this.players[this.wrapTurn(playerIndex + data.rot, this.players.length)]
-      this.players.splice(playerIndex, 1)
-      const nextHand = data.hands[nextPlayer] || []
-      await this.showTable()
-      await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', nextHand, nextHand.length)
+    if (this.dataIsReady(data)) {
+      if (playerIndex === -1) return
+      const hand = data.hands[player]
+      if (hand) {
+        data.pile.push(...hand)
+        delete data.hands[player]
+      }
+      if (playerIndex < data.turn) {
+        data.turn -= 1
+      } else if (playerIndex === data.turn) {
+        const nextPlayer = this.players[this.wrapTurn(playerIndex + data.rot, this.players.length)]
+        this.players.splice(playerIndex, 1)
+        const nextHand = data.hands[nextPlayer] || []
+        await this.showTable()
+        await this.showPlayerCards(nextPlayer, 'It\'s your turn! Here is your hand', nextHand, nextHand.length)
+      }
     }
     this.players.splice(playerIndex, 1)
     this.saveState()
