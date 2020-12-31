@@ -12,6 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
     "outDir": "./dist",
+    "sourceMap": true,
     "paths": {
       "@/*": [
         "src/*"
