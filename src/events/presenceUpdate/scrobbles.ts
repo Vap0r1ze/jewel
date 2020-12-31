@@ -11,6 +11,7 @@ export default function recordScrobble(this: Bot, member: Member | Relationship)
     if (!scrobbleGuildMember) return
     scrobbleMember = scrobbleGuildMember
   }
+  if (!scrobbleMember.roles.some(r => process.env.SCROBBLE_ROLES.includes(r))) return
 
   const db = this.getDB('scrobbles')
   if (!member.activities) return
