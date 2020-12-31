@@ -1,10 +1,9 @@
 import superagent from 'superagent'
 import btoa from 'btoa'
 import Bot from '@/services/Bot'
+import chalk from 'chalk'
 
 const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
-
-exports.dependencies = ['db', 'api']
 
 function httpReq(
   method: string,
@@ -108,5 +107,15 @@ export default function initScrobbles(this: Bot) {
       }
     }
     return { token: cache.spotifyToken.token, type: 'Bearer' }
+  })
+
+  this.client.once('ready', () => {
+    const scrobbleGuild = this.client.guilds.get(process.env.SCROBBLE_GUILD)
+    if (scrobbleGuild) {
+      scrobbleGuild.fetchAllMembers(20000).then(n => {
+        const s = n === 1 ? '' : 's'
+        this.logger.log('SCROBBLE', chalk`Requested and received {green.bold ${n.toString()}} guild member${s}`)
+      })
+    }
   })
 }
