@@ -11,3 +11,6 @@ pm2.json
 # Data
 dump.rdb
 json.sqlite
+
+# Build
+dist
