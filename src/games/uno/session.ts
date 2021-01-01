@@ -12,7 +12,7 @@ const colorNames = {
 }
 
 export interface UnoData {
-  initialized: boolean;
+  initialized: true;
   hands: Dict<number[]>;
   deck: number[]; // deck sorted bottom to top
   pile: number[]; // pile sorted top to bottom
@@ -24,12 +24,7 @@ export interface UnoData {
 export default class UnoSession extends GameSession {
   gameConfig!: import('@/games/uno/game').default['defaultConfig']
 
-  data!: UnoData | {}
-
-  dataIsReady(data: UnoData | {}): data is UnoData {
-    if ('initialized' in data) return data.initialized
-    return false
-  }
+  data!: UnoData | { initialized?: false }
 
   wrapTurn(turn: number, p: number) {
     return turn - Math.floor(turn / p) * p
@@ -60,7 +55,7 @@ export default class UnoSession extends GameSession {
   // TODO: condense this maybe?
   async announceCardPlay(cardIndex: number, player: string, nextPlayer: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const card = deckData.deck[cardIndex]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     const curPlayer = this.players[data.turn]
@@ -100,7 +95,7 @@ export default class UnoSession extends GameSession {
 
   async showTable(comment?: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const card = deckData.deck[data.pile[0]]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     let outComment = comment
@@ -123,7 +118,7 @@ export default class UnoSession extends GameSession {
 
   async drawCards(amount = 1) {
     const { data } = this
-    if (!this.dataIsReady(data)) return []
+    if (!data.initialized) return []
     const drawn = []
     for (let i = 0; i < amount; i += 1) {
       if (data.deck.length === 0) { await this.shufflePileIntoDeck() }
@@ -134,7 +129,7 @@ export default class UnoSession extends GameSession {
 
   async shufflePileIntoDeck() {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const pile = data.pile.splice(1)
     for (let i = pile.length; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * i)
@@ -153,7 +148,7 @@ export default class UnoSession extends GameSession {
 
   async handleDM(msg: Message) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const player = msg.author.id
     await this.chatMessage(msg)
     if (/^[.,] */i.test(msg.content)) {
@@ -317,7 +312,7 @@ export default class UnoSession extends GameSession {
 
   async winGame(winner: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const card = deckData.deck[data.pile[0]]
     const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
@@ -332,7 +327,7 @@ export default class UnoSession extends GameSession {
   async gameHandleLeave(player: string) {
     const { data } = this
     const playerIndex = this.players.indexOf(player)
-    if (this.dataIsReady(data)) {
+    if (data.initialized) {
       if (playerIndex === -1) return
       const hand = data.hands[player]
       if (hand) {

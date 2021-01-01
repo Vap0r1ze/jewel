@@ -7,7 +7,7 @@ const letterEmoji: string[] = [] // regional indicators
 for (let i = 0; i < 26; i += 1) { letterEmoji.push(String.fromCharCode(0xd83c, 0xdde6 + i)) }
 
 export interface CAHData {
-  initialized: boolean;
+  initialized: true;
   hands: Dict<number[]>;
   whiteDeck: number[];
   blackDeck: number[];
@@ -24,13 +24,7 @@ export interface CAHData {
 export default class CAHSession extends GameSession {
   gameConfig!: import('@/games/cah/game').default['defaultConfig']
 
-  data!: CAHData | {}
-
-  // Type Guard
-  dataIsReady(data: CAHData | {}): data is CAHData {
-    if ('initialized' in data) return data.initialized
-    return false
-  }
+  data!: CAHData | { initialized?: false }
 
   // Events
   async handleDM(msg: Message) {
@@ -53,7 +47,7 @@ export default class CAHSession extends GameSession {
 
   async handlePlayerChoice(choice: string, player: string, removed?: boolean) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const choiceMsdId = data.choiceMsgs[player]
@@ -97,7 +91,7 @@ export default class CAHSession extends GameSession {
   handleCzarChoice(choice: string, czar: string, removed?: boolean) {
     if (removed) return
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
 
@@ -116,7 +110,7 @@ export default class CAHSession extends GameSession {
   // Routine
   async startPlayerPeriod(title?: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { playerPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
@@ -187,7 +181,7 @@ export default class CAHSession extends GameSession {
 
   async warnPlayers() {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { warnPeriod } = this.gameConfig
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
@@ -202,7 +196,7 @@ export default class CAHSession extends GameSession {
 
   async endPlayerPeriod() {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const choiceCount = Object.values(data.playerChoices)
@@ -245,7 +239,7 @@ export default class CAHSession extends GameSession {
 
   async startCzarPeriod() {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { czarPeriod, warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
@@ -295,7 +289,7 @@ export default class CAHSession extends GameSession {
 
   async warnCzar() {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { warnPeriod } = this.gameConfig
     const czar = this.players[data.czar]
     const czarCard = baseDeck.black[data.czarCard]
@@ -306,7 +300,7 @@ export default class CAHSession extends GameSession {
 
   async endCzarPeriod(selected?: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { maxPoints } = this.gameConfig
     const czarCard = baseDeck.black[data.czarCard]
     this.ctx.jobs.cancel(`${this.id}:czarWarn`)
@@ -453,7 +447,7 @@ export default class CAHSession extends GameSession {
 
   async gameHandleJoin(player: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     const { handSize } = this.gameConfig
     this.players.push(player)
     const drawn = this.drawCards(data.whiteDeck, data.whitePile, handSize)
@@ -464,35 +458,39 @@ export default class CAHSession extends GameSession {
 
   async gameHandleLeave(player: string) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
     const playerIndex = this.players.indexOf(player)
-    if (playerIndex === -1) return
-    const oldCzarIndex = data.czar
-    if (playerIndex < oldCzarIndex) {
-      data.czar -= 1
-      delete data.playerChoices[player]
-    } else if (playerIndex === oldCzarIndex) {
-      data.blackPile.push(data.czarCard)
-      data.czarCard = this.drawCards(data.blackDeck, data.blackPile, 1)[0]
-      data.czarMsg = ''
-      this.clearChoices()
-    }
-    const hand = data.hands[player]
-    if (hand) {
-      data.whitePile.push(...hand)
-      delete data.hands[player]
-    }
-    delete data.scores[player]
-    this.players.splice(playerIndex, 1)
-    this.saveState()
-    if (playerIndex === oldCzarIndex) {
-      await this.startPlayerPeriod()
+    if (data.initialized) {
+      if (playerIndex === -1) return
+      const oldCzarIndex = data.czar
+      if (playerIndex < oldCzarIndex) {
+        data.czar -= 1
+        delete data.playerChoices[player]
+      } else if (playerIndex === oldCzarIndex) {
+        data.blackPile.push(data.czarCard)
+        data.czarCard = this.drawCards(data.blackDeck, data.blackPile, 1)[0]
+        data.czarMsg = ''
+        this.clearChoices()
+      }
+      const hand = data.hands[player]
+      if (hand) {
+        data.whitePile.push(...hand)
+        delete data.hands[player]
+      }
+      delete data.scores[player]
+      this.players.splice(playerIndex, 1)
+      this.saveState()
+      if (playerIndex === oldCzarIndex) {
+        await this.startPlayerPeriod()
+      }
+    } else {
+      this.players.splice(playerIndex, 1)
+      this.saveState()
     }
   }
 
   gameHandleDestroy() {
     const { data } = this
-    if (this.dataIsReady(data)) {
+    if (data.initialized) {
       Object.values(data.choiceMsgs).forEach(msgId => this.ctx.menus.delete(msgId || ''))
       this.ctx.menus.delete(data.czarMsg)
     }
@@ -511,7 +509,7 @@ export default class CAHSession extends GameSession {
 
   clearChoices(menuOnly?: boolean) {
     const { data } = this
-    if (!this.dataIsReady(data)) return
+    if (!data.initialized) return
     if (!menuOnly) { data.playerChoices = {} }
     Object.values(data.choiceMsgs).forEach(msgId => this.ctx.menus.delete(msgId || ''))
     data.choiceMsgs = {}
