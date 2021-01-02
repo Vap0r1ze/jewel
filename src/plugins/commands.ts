@@ -25,14 +25,20 @@ export default function registerCommands(this: Bot) {
     ping: new PingCommand(this),
     remind: new RemindCommand(this),
   }
-  this.client.on('messageCreate', msg => {
-    if (msg.channel.type !== 0 || msg.author.bot) return
+  this.msgq.registerConsumer('commands', 10, (msg, next) => {
+    if (msg.channel.type !== 0 || msg.author.bot) {
+      next()
+      return
+    }
     if (msg.content.startsWith(process.env.PREFIX)) {
       const argsRaw = msg.content
         .replace(process.env.PREFIX, '')
       const args: CommandArgs = Object.assign(argsRaw.split(/ +/), { raw: '' })
       let commandName = args.shift()
-      if (!commandName) return
+      if (!commandName) {
+        next()
+        return
+      }
       args.raw = argsRaw.replace(commandName, '').replace(/^ ?/, '')
       commandName = commandName.toLowerCase()
       const command = (Object.values(commands) as ValueOf<Commands>[])
