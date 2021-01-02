@@ -2,6 +2,10 @@ import Bot from '@/services/Bot'
 import { everyLimit } from 'async'
 import { Message } from 'eris'
 
+export const enum Priority {
+  Commands,
+}
+
 export type MessageConsumerHandler = ((msg: Message, next: () => void) => Promise<void> | void)
 | ((msg: Message) => Promise<void> | void)
 export interface Consumer {
