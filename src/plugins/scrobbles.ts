@@ -9,7 +9,7 @@ function httpReq(
   method: string,
   url: string,
   headers?: Dict<string>,
-  body?: Record<string, any>,
+  body?: Dict<any>,
   bodyType?: string,
 ): Promise<superagent.Response> {
   let request = superagent(method, url)
@@ -31,7 +31,7 @@ async function httpReqBody(
   method: string,
   url: string,
   headers?: Dict<string>,
-  body?: Record<string, any>,
+  body?: Dict<any>,
   bodyType?: string,
 ) {
   const response = await httpReq(method, url, headers, body, bodyType)
@@ -74,7 +74,7 @@ export default function initScrobbles(this: Bot) {
         responses.push(JSON.parse(data))
       })
     } else {
-      const userIds = (query && query.split(',')) || []
+      const userIds = (query?.split(',')) || []
       userIds.forEach(userId => {
         const data = db.get(userId)
         if (data) responses.push(data)

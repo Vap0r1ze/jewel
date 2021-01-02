@@ -1,5 +1,2 @@
 type ValueOf<T> = T[keyof T]
-type Dict<T> = {
-  [key: string]: T | undefined;
-  [key: number]: T | undefined;
-}
+type Dict<T> = Record<string | number, T | undefined>

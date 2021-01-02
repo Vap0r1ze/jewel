@@ -50,6 +50,8 @@ export default class Bot extends EventEmitter {
     this.games = games
     this.gameSessions = gameSessions
 
-    this.emit('init')
+    setImmediate(() => {
+      this.emit('init')
+    })
   }
 }

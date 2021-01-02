@@ -48,7 +48,7 @@ export default class Command {
     const meMember = channel.guild.members.get(this.ctx.client.user.id)
     if (!meMember) return 0
     const meRoles = meMember.roles.map(r => channel.guild.roles.get(r)).reverse()
-    const meColor = (meRoles.find(r => r && r.color) || { color: 0 }).color
+    const meColor = (meRoles.find(r => r?.color) || { color: 0 }).color
     return meColor
   }
 }

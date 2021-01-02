@@ -14,7 +14,7 @@ export default class UnoGame extends Game {
     return 0xcf4347
   }
 
-  get playerRange() {
+  get playerRange(): [number, number] {
     return [2, 12]
   }
 

@@ -80,7 +80,7 @@ export default class CAHSession extends GameSession {
     })
 
     const choiceCount = Object.values(data.playerChoices)
-      .filter(c => c && c.length === blankCount).length
+      .filter(c => c?.length === blankCount).length
     if (choiceCount === Object.keys(data.playerChoices).length) {
       this.ctx.jobs.cancel(`${this.id}:playerWarn`)
       this.ctx.jobs.cancel(`${this.id}:playerEnd`)
@@ -99,7 +99,7 @@ export default class CAHSession extends GameSession {
     this.ctx.jobs.cancel(`${this.id}:czarEnd`)
     const candidates = Object.keys(data.playerChoices).filter(p => {
       const choices = data.playerChoices[p]
-      return choices && choices.length === blankCount
+      return choices?.length === blankCount
     })
     const selected = candidates[parseInt(choice, 10)]
     this.ctx.menus.delete(data.czarMsg)
@@ -200,7 +200,7 @@ export default class CAHSession extends GameSession {
     const czarCard = baseDeck.black[data.czarCard]
     const blankCount = czarCard.pick
     const choiceCount = Object.values(data.playerChoices)
-      .filter(c => c && c.length === blankCount).length
+      .filter(c => c?.length === blankCount).length
     const s = blankCount === 1 ? '' : 's'
 
     if (choiceCount <= 1) {
@@ -218,7 +218,7 @@ export default class CAHSession extends GameSession {
     } else {
       const noChoicePlayers = Object.keys(data.playerChoices).filter(p => {
         const choices = data.playerChoices[p]
-        return choices && choices.length < blankCount
+        return (choices?.length ?? 0) < blankCount
       })
       if (noChoicePlayers.length) {
         const pS = noChoicePlayers.length === 1 ? '' : 's'
@@ -248,7 +248,7 @@ export default class CAHSession extends GameSession {
     const s = blankCount === 1 ? '' : 's'
     const candidates = Object.keys(data.playerChoices).filter(p => {
       const choices = data.playerChoices[p]
-      return choices && choices.length === blankCount
+      return choices?.length === blankCount
     })
     const candidatesEmbed = {
       embed: {

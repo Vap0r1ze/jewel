@@ -50,7 +50,7 @@ export default function createJobManager(this: Bot) {
       if (this.store[id]) { delete this.store[id] }
       return db.delete(`jobs.${id}`)
     },
-    create(id: string, when: string | Date | Moment, handlerPath: string, data?: any) {
+    create<T>(id: string, when: string | Date | Moment, handlerPath: string, data?: T) {
       let whenStr = when
       if (whenStr instanceof Date || moment.isMoment(whenStr)) { whenStr = whenStr.toISOString() }
       const jobInfo = {

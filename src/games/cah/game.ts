@@ -14,7 +14,7 @@ export default class CAHGame extends Game {
     return 0xEEEEEE
   }
 
-  get playerRange() {
+  get playerRange(): [number, number] {
     return [3, 10]
   }
 

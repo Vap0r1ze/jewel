@@ -21,7 +21,7 @@ export default class Game {
 
   get color() { return 0 }
 
-  get playerRange() { return [0, 0] }
+  get playerRange(): [number, number] { return [0, 0] }
 
   get defaultConfig() { return {} }
 
