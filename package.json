@@ -4,11 +4,12 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc && node dist/index.js",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
     "build": "tsc",
     "lint": "eslint src/ --ext .ts"
   },
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^3.2.0",
     "btoa": "^1.2.1",
     "chalk": "^2.4.1",
     "dateformat": "^3.0.3",
@@ -38,6 +39,7 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-plugin-import": "^2.22.1",
+    "tsc-watch": "^4.2.9",
     "typescript": "^3.9.7"
   },
   "_moduleAliases": {
