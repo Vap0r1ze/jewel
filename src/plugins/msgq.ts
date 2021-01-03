@@ -10,7 +10,7 @@ export type MessageConsumerHandler = ((msg: Message, next: () => void) => Promis
 | ((msg: Message) => Promise<void> | void)
 export interface Consumer {
   id: string;
-  priority: number;
+  priority: Priority;
   handler: MessageConsumerHandler;
 }
 
@@ -21,7 +21,7 @@ export function createMsgqManager(this: Bot) {
     [consumers]: [] as Consumer[],
     registerConsumer(
       id: string,
-      priority: number,
+      priority: Priority,
       handler: MessageConsumerHandler,
     ) {
       const index = msgqManager[consumers].findIndex(c => c.priority > priority)
