@@ -289,6 +289,7 @@ export default class UnoSession extends GameSession {
       data.pileColor = deckData.deck[data.pile[0]].color[0] as UnoData['pileColor']
     }
     this.gameState = 'INPROGRESS'
+    this.data = data
     this.saveState()
     // eslint-disable-next-line no-restricted-syntax
     for (const player of this.players) {
