@@ -1,6 +1,15 @@
 import Game from '@/services/Game'
 import CAHSession from './session'
 
+export type CAHConfig = {
+  handSize: number;
+  playerPeriod: number;
+  czarPeriod: number;
+  warnPeriod: number;
+  maxPoints: number;
+  packs: number[];
+}
+
 export default class CAHGame extends Game {
   get name() {
     return 'cah'
@@ -18,7 +27,7 @@ export default class CAHGame extends Game {
     return [3, 10]
   }
 
-  get defaultConfig() {
+  get defaultConfig(): CAHConfig {
     return {
       handSize: 9,
       playerPeriod: 60,

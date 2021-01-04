@@ -12,6 +12,7 @@ import registerCommands from '@/plugins/commands'
 import initDummyCmds from '@/plugins/dummyCmds'
 import registerEventHandlers from '@/plugins/events'
 import createMenuManager from '@/plugins/reactMenu'
+import createConfigManager from '@/plugins/config'
 import registerGames from '@/plugins/games'
 import initScrobbles from '@/plugins/scrobbles'
 import { createMsgqManager } from '@/plugins/msgq'
@@ -38,6 +39,8 @@ export default class Bot extends EventEmitter {
   evtHandlers = registerEventHandlers.call(this)
 
   menus = createMenuManager.call(this)
+
+  config = createConfigManager.call(this)
 
   games: Dict<import('@/services/Game').default>
 

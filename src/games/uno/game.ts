@@ -1,6 +1,10 @@
 import Game from '@/services/Game'
 import UnoSession from './session'
 
+export type UnoConfig = {
+  handSize: number;
+}
+
 export default class UnoGame extends Game {
   get name() {
     return 'uno'
@@ -18,7 +22,7 @@ export default class UnoGame extends Game {
     return [2, 12]
   }
 
-  get defaultConfig() {
+  get defaultConfig(): UnoConfig {
     return {
       handSize: 7,
     }

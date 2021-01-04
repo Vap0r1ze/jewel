@@ -1,3 +1,4 @@
+import { ConfigValues } from '@/plugins/config'
 import { SessionInfoBasic } from '@/plugins/games'
 import Bot from './Bot'
 import GameCommand from './GameCommand'
@@ -23,7 +24,7 @@ export default class Game {
 
   get playerRange(): [number, number] { return [0, 0] }
 
-  get defaultConfig() { return {} }
+  get defaultConfig(): ConfigValues { return {} }
 
   get helpEmbed() { return {} }
 

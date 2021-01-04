@@ -3,6 +3,7 @@ import { everyLimit } from 'async'
 import { Message } from 'eris'
 
 export const enum Priority {
+  Config,
   Commands,
 }
 

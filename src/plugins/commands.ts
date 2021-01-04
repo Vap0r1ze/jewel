@@ -9,6 +9,7 @@ import HelpCommand from '@/commands/help'
 import PingCommand from '@/commands/ping'
 import RemindCommand from '@/commands/remind'
 import Command, { CommandArgs } from '@/services/Command'
+import ConfigCommand from '@/commands/config'
 import { Priority } from './msgq'
 
 export interface Commands {
@@ -25,6 +26,7 @@ export default function registerCommands(this: Bot) {
     help: new HelpCommand(this),
     ping: new PingCommand(this),
     remind: new RemindCommand(this),
+    config: new ConfigCommand(this),
   }
   this.msgq.registerConsumer('commands', Priority.Commands, (msg, next) => {
     if (msg.channel.type !== 0 || msg.author.bot) {
