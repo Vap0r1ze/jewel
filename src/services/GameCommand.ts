@@ -139,6 +139,13 @@ export default class GameCommand extends Command {
       case 'start': {
         let sessionInfo = this.checkHostForSession(msg)
         if (sessionInfo) {
+          if (this.game.name === sessionInfo.gameName && sessionInfo.host === authorId) {
+            const session = this.ctx.gameSessions[sessionInfo.id]
+            if (session) {
+              session.handlePoolReact('start', authorId)
+              return
+            }
+          }
           msg.channel.createMessage(`<@${authorId}>, You're already in a session of **${this.ctx.games[sessionInfo.gameName]?.displayName}**`)
           return
         }
