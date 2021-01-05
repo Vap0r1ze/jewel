@@ -20,7 +20,7 @@ export default class GamesCommand extends Command {
       embed: {
         color: this.meColor(msg),
         title: 'Games',
-        description: (Object.values(this.ctx.games) as Game[]).map(g => `\`${g.name}\`  ${g.displayName}`).join('\n'),
+        description: (Object.values(this.ctx.games) as Game[]).map(g => `\`${process.env.PREFIX}${g.name}\`  ${g.displayName}`).join('\n'),
       },
     })
   }

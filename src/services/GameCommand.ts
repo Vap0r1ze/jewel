@@ -3,6 +3,7 @@ import { Message } from 'eris'
 import shortid from 'shortid'
 import Bot from './Bot'
 import Command, { CommandArgs } from './Command'
+import GameSession from './GameSession'
 
 export default class GameCommand extends Command {
   game: import('@/services/Game').default
@@ -138,7 +139,7 @@ export default class GameCommand extends Command {
       case 'start': {
         let sessionInfo = this.checkHostForSession(msg)
         if (sessionInfo) {
-          msg.channel.createMessage(`<@${msg.author.id}>, You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`)
+          msg.channel.createMessage(`<@${authorId}>, You're already in a session of **${this.ctx.games[sessionInfo.gameName]?.displayName}**`)
           return
         }
 
@@ -155,12 +156,13 @@ export default class GameCommand extends Command {
               embed: {
                 color: 0xFF0000,
                 title: 'Could not create game.',
-                description: `You're already in a game session! (${sessionInfo.gameName} #${sessionInfo.id})`,
+                description: `You're already in a session of **${this.ctx.games[sessionInfo.gameName]?.displayName}**`,
               },
             })
           } else {
             sessionInfo = {
               id: shortid(),
+              createdAt: Date.now(),
               isOpen: true,
               poolMsgId: poolMsg.id,
               poolChannelId: poolMsg.channel.id,
@@ -193,6 +195,46 @@ export default class GameCommand extends Command {
         })
         break
       }
+      case 'join': {
+        const latestSession = this.getLastestSession(sesh => sesh.game.name === this.game.name
+          && sesh.poolChannelId === msg.channel.id)
+        if (latestSession) {
+          latestSession.handlePoolReact('join', authorId)
+        } else {
+          msg.channel.createMessage(`<@${authorId}>, There are no **${this.game.displayName}** sessions active in this channel.`)
+        }
+        break
+      }
+      case 'watch':
+      case 'see':
+      case 'spectate': {
+        const latestSession = this.getLastestSession(sesh => sesh.game.name === this.game.name
+          && sesh.poolChannelId === msg.channel.id)
+        if (latestSession) {
+          if (latestSession.players.includes(authorId)) {
+            msg.channel.createMessage(`<@${authorId}>, you cannot spectate a game while you're currently in a session.`)
+          } else {
+            latestSession.handlePoolReact('spectate', authorId)
+          }
+        } else {
+          msg.channel.createMessage(`<@${authorId}>, There are no **${this.game.displayName}** sessions active in this channel.`)
+        }
+        break
+      }
+      case 'leave': {
+        const latestSession = this.getLastestSession(sesh => sesh.game.name === this.game.name
+          && sesh.viewers.includes(authorId))
+        if (latestSession) {
+          if (latestSession.players.includes(authorId)) {
+            latestSession.handlePoolReact('leave', authorId)
+          } else if (latestSession.spectators.includes(authorId)) {
+            latestSession.handlePoolReact('spectate', authorId)
+          }
+        } else {
+          msg.channel.createMessage(`<@${authorId}>, you aren't in any **${this.game.displayName}** sessions right now.`)
+        }
+        break
+      }
       default: {
         msg.channel.createMessage({
           embed: {
@@ -204,5 +246,15 @@ export default class GameCommand extends Command {
         })
       }
     }
+  }
+
+  getLastestSession(filter: (sesh: GameSession) => boolean): GameSession | null {
+    const sessions = Object.values(this.ctx.gameSessions) as GameSession[]
+    const sessionsFiltered = sessions.filter(filter)
+    if (sessionsFiltered.length > 0) {
+      sessionsFiltered.sort((a, b) => b.createdAt - a.createdAt)
+      return sessionsFiltered[0]
+    }
+    return null
   }
 }

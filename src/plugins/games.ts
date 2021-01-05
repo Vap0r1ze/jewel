@@ -7,6 +7,7 @@ import chalk from 'chalk'
 
 export interface SessionInfo<GameConfig, GameData> {
   id: string;
+  createdAt: number;
   isOpen: boolean;
   poolMsgId: string;
   poolChannelId: string;

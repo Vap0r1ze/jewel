@@ -11,6 +11,8 @@ export default class GameSession {
 
   id: string
 
+  createdAt: number
+
   isOpen: boolean
 
   poolMsgId: string
@@ -37,6 +39,7 @@ export default class GameSession {
     this.ctx = game.ctx
     this.game = game
     this.sessionInfo = sessionInfo
+    this.createdAt = sessionInfo.createdAt
     this.isOpen = sessionInfo.isOpen
     this.id = sessionInfo.id
     this.poolMsgId = sessionInfo.poolMsgId
@@ -169,8 +172,8 @@ export default class GameSession {
         Object.values(sessions).some(sessionInfo => {
           if (!sessionInfo) return false
           if (sessionInfo.players.includes(userId)) {
-            this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, You're already in a game session,`
-              + ` you can't join another game! (${sessionInfo.gameName} #${sessionInfo.id})`)
+            this.ctx.client.createMessage(this.poolChannelId, `<@${userId}>, You're already in a **${this.ctx.games[sessionInfo.gameName]?.displayName}** session,`
+              + ' you can\'t join another game!')
             return true
           }
           return false

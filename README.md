@@ -6,12 +6,12 @@ General
 - ✔️ 😃😃😃 please for the love of god rewrite this project in typescript i cant handle the mindless type errors
 
 Command
-- ⬜ add permission checkerCommand
+- ⬜ add permission checker
 
 Game
 - ⬜ add config changer
 - ⬜ add permission safeguard
-- ⬜ add commands to go along with menu
+- ✔️ add commands to go along with menu
 - ✔️ add game status command
 - ✔️ fix in-game message grouping
 - ⬜ add in-game message attachments
