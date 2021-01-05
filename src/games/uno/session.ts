@@ -198,7 +198,7 @@ export default class UnoSession extends GameSession {
             let cardHandIndex: number
             if (isWild) {
               cardHandIndex = Deck.fromIndexes(deckData.deck, hand)
-                .findIndex(c => c.type === sel[2])
+                .findIndex(c => c.type === sel[2].replace(/wild *\+4/, 'wild+4'))
             } else {
               cardHandIndex = Deck.fromIndexes(deckData.deck, hand)
                 .findIndex(c => c.color[0] === sel[1][0] && c.type === sel[2])
