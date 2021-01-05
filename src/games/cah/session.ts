@@ -543,6 +543,7 @@ export default class CAHSession extends GameSession {
     whiteCards.forEach(whiteCard => {
       text = text.replace('_', `**${whiteCard}**`)
     })
+    text = text.replace(/_/g, '\\_\\_\\_\\_\\_')
     return text
   }
 }
