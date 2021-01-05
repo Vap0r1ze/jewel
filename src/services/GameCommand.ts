@@ -18,7 +18,7 @@ export default class GameCommand extends Command {
   }
 
   get description() {
-    return `start a game of ${this.game.name}`
+    return `Get information about ${this.game.displayName}`
   }
 
   get name() {
@@ -236,11 +236,23 @@ export default class GameCommand extends Command {
         break
       }
       default: {
+        const gameCmd = PREFIX + this.game.name
         msg.channel.createMessage({
           embed: {
             color: this.game.color,
             title: `${this.game.displayName} help`,
             footer: { text: `Requires ${this.game.playerRange.join('-')} players | Start a game with "${PREFIX}${this.name} start"` },
+            fields: [{
+              name: 'Commands',
+              value: [
+                `\`${gameCmd} show\` Repost the embed for the game **(host only)**`,
+                `\`${gameCmd} kick <user>\` Kicks the user from your game **(host only)**`,
+                `\`${gameCmd} start\` Start a game of ${this.game.displayName}`,
+                `\`${gameCmd} join\` Join the most recently created game of ${this.game.displayName} in the channel`,
+                `\`${gameCmd} spectate\` Spectate the most recently created game of ${this.game.displayName} in the channel`,
+                `\`${gameCmd} leave\` Leave the game of ${this.game.displayName} you are currently in`,
+              ].join('\n'),
+            }],
             ...this.game.helpEmbed,
           },
         })

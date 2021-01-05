@@ -187,6 +187,28 @@ export default class UnoSession extends GameSession {
           await this.showTable()
           break
         }
+        case 'help': {
+          this.dmPlayer(player, {
+            embed: {
+              title: 'Uno!',
+              description: [
+                '`.draw` Draw a card and forfeit your turn',
+                '`.hand` Show your hand',
+                '`.table` Display the current state of the table to everyone',
+                '`.help` This.',
+              ].join('\n'),
+              fields: [{
+                name: 'How to play a card',
+                value: [
+                  'You can play a card by saying your play in this format: `.color card`',
+                  'Remember: **the color comes before the card**\n',
+                  'E.gs: `.red 2` `.blue wild+4`',
+                ].join('\n'),
+              }],
+            },
+          })
+          break
+        }
         default: {
           if (this.players.indexOf(player) === data.turn) {
             const sel = cardSelPattern.exec(cmd.toLowerCase())

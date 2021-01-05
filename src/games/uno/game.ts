@@ -31,13 +31,11 @@ export default class UnoGame extends Game {
   get helpEmbed() {
     return {
       description: [
-        'To play a card, prefix your message with `,` or `.` (card names/colors are not case sensitive)',
-        'If you\'re playing a wild card, you must choose your color as you play the card',
-        '\n**__Examples__**',
-        '.red 2',
-        '.yellow +2',
-        '.green SKIP',
-        '.red WILD +4 **<~~------~~ this is how you play a wild card**',
+        'To start a hand, seven cards are dealt to each player, and the top card of the remaining deck is flipped over on the table to begin the pile. A random player'
+          + ' plays first. On a player\'s turn, they must do one of the following:',
+        '**1)** Play one card matching the discard in color, number, or symbol',
+        '**2)** Play a Wild card, or a playable Wild Draw Four card',
+        '**3)** Draw the top card from the deck, then ~~play it if possible~~ forfeit your turn',
       ].join('\n'),
     }
   }
