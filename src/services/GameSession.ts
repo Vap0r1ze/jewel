@@ -263,6 +263,7 @@ export default class GameSession {
                     embed: {
                       color: 0x43b581,
                       description: `<@${userId}>'s game of **${this.game.displayName}** has just started! Have fun players!`,
+                      footer: { text: 'Remember that all of the gameplay takes place in DMs!' },
                     },
                   })
                   this.startGame()
