@@ -63,6 +63,7 @@ export interface ScrobbleData {
 
 export default function initScrobbles(this: Bot) {
   const db = this.getDB('scrobbles')
+  const maxHistory = 100
 
   this.api.get('/scrobbles', async (request, reply) => {
     reply.type('application/json').code(200)
@@ -71,13 +72,18 @@ export default function initScrobbles(this: Bot) {
     const query = (request.query as Dict<string>).q
     if (query === '*') {
       db.all().forEach(({ data }) => {
-        responses.push(JSON.parse(data))
+        const pData = JSON.parse(data)
+        pData.scrobbles.splice(maxHistory, Math.max(0, pData.scrobbles.length - maxHistory))
+        responses.push(pData)
       })
     } else {
       const userIds = (query?.split(',')) || []
       userIds.forEach(userId => {
         const data = db.get(userId)
-        if (data) responses.push(data)
+        if (data) {
+          data.scrobbles.splice(maxHistory, Math.max(0, data.scrobbles.length - maxHistory))
+          responses.push(data)
+        }
       })
     }
     return responses
