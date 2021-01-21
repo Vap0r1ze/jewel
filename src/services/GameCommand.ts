@@ -94,8 +94,9 @@ export default class GameCommand extends Command {
                 }
               })
             }
+          } else {
+            msg.channel.createMessage(`<@${authorId}>, I could not find that user in your session.`)
           }
-          msg.channel.createMessage(`<@${authorId}>, I could not find that user in your session.`)
         }
         break
       }
