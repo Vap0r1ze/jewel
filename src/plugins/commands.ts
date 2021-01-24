@@ -9,6 +9,7 @@ import HelpCommand from '@/commands/help'
 import PingCommand from '@/commands/ping'
 import RemindCommand from '@/commands/remind'
 import Command, { CommandArgs } from '@/services/Command'
+import BdayCommand from '@/commands/birthday'
 import { Priority } from './msgq'
 
 export interface Commands {
@@ -19,6 +20,7 @@ export default function registerCommands(this: Bot) {
   const cmdsPath = resolve(__dirname, '../commands')
   if (!fs.existsSync(cmdsPath)) { fs.mkdirSync(cmdsPath) }
   const commands: Commands = {
+    birthday: new BdayCommand(this),
     eval: new EvalCommand(this),
     games: new GamesCommand(this),
     github: new GitHubCommand(this),

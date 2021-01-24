@@ -23,6 +23,8 @@ export default class Command {
 
   get usage() { return '' }
 
+  get examples(): string[] { return [] }
+
   get description() { return '' }
 
   get aliases(): string[] { return [] }

@@ -6,6 +6,10 @@ export default class HelpCommand extends Command {
     return 'help'
   }
 
+  get aliases() {
+    return ['h']
+  }
+
   get description() {
     return 'Get help with commands'
   }
@@ -17,10 +21,18 @@ export default class HelpCommand extends Command {
       c => c.name === args[0] || c.aliases.includes(args[0] || ''),
     )
     if (args[0] && cmd && (!cmd.isDeveloper || isDeveloper)) {
+      let exampleField
+      if (cmd.examples.length) {
+        exampleField = {
+          name: 'Examples',
+          value: cmd.examples.map(ex => `\`${process.env.PREFIX}${cmd.name} ${ex}\``).join('\n'),
+        }
+      }
       msg.channel.createMessage({
         embed: {
           color: this.meColor(msg),
           description: `\`${PREFIX}${`${cmd.name} ${cmd.usage}`.trim()}\`\n${cmd.description}`,
+          fields: exampleField ? [exampleField] : [],
         },
       })
       return

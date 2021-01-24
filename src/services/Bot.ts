@@ -15,6 +15,7 @@ import createMenuManager from '@/plugins/reactMenu'
 import registerGames from '@/plugins/games'
 import initScrobbles from '@/plugins/scrobbles'
 import { createMsgqManager } from '@/plugins/msgq'
+import createProfileManager from '@/plugins/profiles'
 
 export default class Bot extends EventEmitter {
   logger = logger
@@ -32,6 +33,8 @@ export default class Bot extends EventEmitter {
   msgq = createMsgqManager.call(this)
 
   jobs = createJobManager.call(this)
+
+  profiles = createProfileManager.call(this)
 
   commands = registerCommands.call(this)
 
