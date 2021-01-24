@@ -13,7 +13,9 @@ export default class HelpCommand extends Command {
   handle(msg: Message, args: CommandArgs) {
     const { PREFIX, DEVELOPERS } = process.env
     const isDeveloper = DEVELOPERS.includes(msg.author.id)
-    const cmd = this.ctx.commands[args[0] || '']
+    const cmd = Object.values(this.ctx.commands).find(
+      c => c.name === args[0] || c.aliases.includes(args[0] || ''),
+    )
     if (args[0] && cmd && (!cmd.isDeveloper || isDeveloper)) {
       msg.channel.createMessage({
         embed: {
