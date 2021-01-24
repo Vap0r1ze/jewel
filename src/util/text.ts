@@ -19,5 +19,5 @@ export default function transformText(text: string, ...styles: string[]) {
       }
     }
   })
-  return text
+  return resText
 }
