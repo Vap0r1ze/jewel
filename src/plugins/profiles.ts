@@ -39,6 +39,13 @@ export default function createProfileManager(this: Bot) {
     }
   })
 
+  this.client.on('ready', () => {
+    Object.values(profileMgr.store).forEach(profile => {
+      if (!profile) return
+      profile.initBirthday(true)
+    })
+  })
+
   const p = Object.keys(profileMgr.store).length
   this.logger.log('PRF', chalk`Loaded {green.bold ${p.toString()}} profile${p === 1 ? '' : 's'} from storage`)
 

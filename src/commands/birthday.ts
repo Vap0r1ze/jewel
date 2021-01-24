@@ -133,6 +133,6 @@ export default class BdayCommand extends Command {
 
     const bdayDisplay = `${this.ctx.transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
     msg.channel.createMessage(`✅  |  Your birthday has been set to **${bdayDisplay}**`)
-    profile.initBirthday()
+    profile.initBirthday(true)
   }
 }
