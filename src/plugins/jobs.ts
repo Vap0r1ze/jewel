@@ -12,9 +12,6 @@ export interface JobInfo {
   handlerPath: string;
   data: any;
 }
-export interface JobStore {
-  [key: string]: Job | undefined;
-}
 
 export default function createJobManager(this: Bot) {
   const db = this.getDB('schedule')
@@ -39,7 +36,7 @@ export default function createJobManager(this: Bot) {
     }
   }
   const jobManager = {
-    store: {} as JobStore,
+    store: {} as Dict<Job>,
     [loadFromInfo](jobInfo: JobInfo) {
       const job = schedule.scheduleJob(jobInfo.when, jobHandlerWrapper(jobInfo))
       db.set(`jobs.${jobInfo.id}`, jobInfo)
