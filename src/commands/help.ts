@@ -6,12 +6,16 @@ export default class HelpCommand extends Command {
     return 'help'
   }
 
+  get usage() {
+    return '[command]'
+  }
+
   get aliases() {
     return ['h']
   }
 
   get description() {
-    return 'Get help with commands'
+    return 'List all of the available commands or get more information about a specific command'
   }
 
   handle(msg: Message, args: CommandArgs) {
@@ -21,18 +25,24 @@ export default class HelpCommand extends Command {
       c => c.name === args[0] || c.aliases.includes(args[0] || ''),
     )
     if (args[0] && cmd && (!cmd.isDeveloper || isDeveloper)) {
-      let exampleField
+      const embedFields: EmbedField[] = []
+      if (cmd.aliases.length) {
+        embedFields.push({
+          name: 'Aliases',
+          value: [cmd.name].concat(...cmd.aliases).map(n => `\`${n}\``).join(' '),
+        })
+      }
       if (cmd.examples.length) {
-        exampleField = {
+        embedFields.push({
           name: 'Examples',
-          value: cmd.examples.map(ex => `\`${process.env.PREFIX}${cmd.name} ${ex}\``).join('\n'),
-        }
+          value: cmd.examples.map(ex => `\`${process.env.PREFIX}${args[0]} ${ex}\``).join('\n'),
+        })
       }
       msg.channel.createMessage({
         embed: {
           color: this.meColor(msg),
-          description: `\`${PREFIX}${`${cmd.name} ${cmd.usage}`.trim()}\`\n${cmd.description}`,
-          fields: exampleField ? [exampleField] : [],
+          description: `\`${PREFIX}${`${args[0]} ${cmd.usage}`.trim()}\`\n${cmd.description}`,
+          fields: embedFields,
         },
       })
       return
