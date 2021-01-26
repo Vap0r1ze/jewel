@@ -34,7 +34,7 @@ export default class BdayCommand extends Command {
     return [
       'January 26',
       '1/26/03',
-      '2 29',
+      '29 2',
     ]
   }
 
