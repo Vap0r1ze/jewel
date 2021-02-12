@@ -7,7 +7,7 @@ export default class GitHubCommand extends Command {
   }
 
   get aliases() {
-    return ['source', 'code', 'gh']
+    return ['source', 'code', 'gh', 'src']
   }
 
   get isHidden() {
@@ -19,6 +19,6 @@ export default class GitHubCommand extends Command {
   }
 
   handle(msg: Message) {
-    msg.channel.createMessage(`<@${msg.author.id}>, <:github:786216616760573972> <https://github.com/Vap0r1ze/Jewel/tree/the-mirror>`)
+    msg.channel.createMessage(`<@${msg.author.id}>, <:github:786216616760573972> <https://github.com/Vap0r1ze/jewel>`)
   }
 }
