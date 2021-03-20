@@ -4,7 +4,9 @@ import Bot from '@/services/Bot'
 
 export default function createClient(this: Bot) {
   const token = process.env.BOT_TOKEN
-  const client = new Eris.Client(token)
+  const client = new Eris.Client(token, {
+    intents: 0b011011100000011,
+  })
   this.on('init', () => {
     client.connect()
   })
