@@ -23,5 +23,6 @@ declare namespace NodeJS {
     WELCOME_CHANNELS: string;
     WELCOME_MESSAGE: string;
     WELCOME_EMBED: string;
+    SENTRY_DSN: string;
   }
 }
