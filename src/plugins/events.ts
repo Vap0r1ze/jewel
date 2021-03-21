@@ -7,6 +7,7 @@ import recordScrobble from '@/events/presenceUpdate/scrobbles'
 import reactMenuRemove from '@/events/messageReactionRemove/reactMenu'
 import reactMenuAdd from '@/events/messageReactionAdd/reactMenu'
 import welcome from '@/events/guildMemberAdd/welcome'
+import welcomeRole from '@/events/guildMemberUpdate/welcome'
 
 export interface EventHandler {
   event: string;
@@ -19,6 +20,7 @@ export default function registerEventHandlers(this: Bot) {
   const events = fs.readdirSync(eventsPath)
   const evtHandlers: EventHandler[] = [
     { event: 'guildMemberAdd', handler: welcome },
+    { event: 'guildMemberUpdate', handler: welcomeRole },
     { event: 'messageCreate', handler: dmEvent },
     { event: 'messageReactionAdd', handler: reactMenuAdd },
     { event: 'messageReactionRemove', handler: reactMenuRemove },
