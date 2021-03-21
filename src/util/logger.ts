@@ -2,15 +2,6 @@ import chalk from 'chalk'
 import dateFormat from 'dateformat'
 import { Message } from 'eris'
 import * as Sentry from '@sentry/node'
-// import * as Tracing from '@sentry/tracing'
-
-const doSentry = Boolean(process.env.SENTRY_DSN)
-if (doSentry) {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    tracesSampleRate: 1.0,
-  })
-}
 
 export default {
   format: '[hh:MM:ss TT]',
@@ -21,7 +12,7 @@ export default {
     console.log(chalk`${this.time} {bgYellow.white.bold  ${title.toUpperCase()} } ${desc}`)
   },
   error(title: string, error: Error | string): void {
-    if (doSentry) Sentry.captureException(error, { tags: { title } })
+    Sentry.captureException(error, scope => scope.setTag('title', title))
     console.log(chalk`${this.time} {bgRed.white.bold  ${title.toUpperCase()} } ${(error instanceof Error) ? (error.stack || error.message) : error}`)
   },
   log(title: string, desc: string): void {
