@@ -4,6 +4,8 @@ import { table } from 'quick.db'
 import moment from 'moment'
 import Bot from './Bot'
 
+const bdayRoles: string[] = JSON.parse(process.env.BDAY_ROLES)
+
 export default class Profile implements ProfileData {
   ctx: Bot
 
@@ -72,9 +74,11 @@ export default class Profile implements ProfileData {
     if (!guild) return
     const [member] = await guild.fetchMembers({ userIDs: [this.id] })
     if (!member) return
-    if (member.roles.includes(process.env.BDAY_ROLE)) return
+    if (bdayRoles.every(id => member.roles.includes(id))) return
 
-    await member.addRole(process.env.BDAY_ROLE)
+    const missingRoles = bdayRoles.filter(id => !member.roles.includes(id))
+
+    await member.edit({ roles: [...member.roles, ...missingRoles] })
 
     this.birthdayLastUsed = Date.now()
     this.saveData()
@@ -85,9 +89,11 @@ export default class Profile implements ProfileData {
     if (!guild) return
     const [member] = await guild.fetchMembers({ userIDs: [this.id] })
     if (!member) return
-    if (!member.roles.includes(process.env.BDAY_ROLE)) return
+    if (!bdayRoles.every(id => member.roles.includes(id))) return
 
-    await member.removeRole(process.env.BDAY_ROLE)
+    const nonBdayRoles = member.roles.filter(id => !bdayRoles.includes(id))
+
+    await member.edit({ roles: nonBdayRoles })
   }
 
   // Setters

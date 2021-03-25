@@ -18,7 +18,7 @@ declare namespace NodeJS {
     SCROBBLE_GUILD: string;
     SCROBBLE_ROLES: string;
     BDAY_GUILD: string;
-    BDAY_ROLE: string;
+    BDAY_ROLES: string;
     WELCOME_ROLES: string;
     WELCOME_CHANNELS: string;
     WELCOME_MESSAGE: string;
