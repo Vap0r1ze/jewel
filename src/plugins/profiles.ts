@@ -1,5 +1,6 @@
 import Bot from '@/services/Bot'
 import Profile from '@/services/Profile'
+import logger from '@/util/logger'
 import chalk from 'chalk'
 
 export interface ProfileData {
@@ -47,7 +48,7 @@ export default function createProfileManager(this: Bot) {
   })
 
   const p = Object.keys(profileMgr.store).length
-  this.logger.log('PRF', chalk`Loaded {green.bold ${p.toString()}} profile${p === 1 ? '' : 's'} from storage`)
+  logger.log('PRF', chalk`Loaded {green.bold ${p.toString()}} profile${p === 1 ? '' : 's'} from storage`)
 
   return profileMgr
 }

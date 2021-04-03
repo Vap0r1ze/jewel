@@ -2,6 +2,7 @@ import moment from 'moment'
 import GameSession from '@/services/GameSession'
 import baseDeck from '@/services/data/cah.deck'
 import { Message } from 'eris'
+import transformText from '@/util/text'
 
 const letterEmoji: string[] = [] // regional indicators
 for (let i = 0; i < 26; i += 1) { letterEmoji.push(String.fromCharCode(0xd83c, 0xdde6 + i)) }
@@ -73,7 +74,7 @@ export default class CAHSession extends GameSession {
         fields: [{
           name: 'Options',
           value: hand.map((c, i) => `${letterEmoji[i]} ${
-            this.ctx.transformText(baseDeck.white[c], 'capitalize')
+            transformText(baseDeck.white[c], 'capitalize')
           }`).join('\n'),
         }],
       },
@@ -157,7 +158,7 @@ export default class CAHSession extends GameSession {
           fields: [{
             name: 'Options',
             value: hand.map((c, i) => `${letterEmoji[i]} ${
-              this.ctx.transformText(baseDeck.white[c], 'capitalize')
+              transformText(baseDeck.white[c], 'capitalize')
             }`).join('\n'),
           }],
         },

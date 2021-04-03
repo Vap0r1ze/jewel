@@ -2,6 +2,8 @@ import schedule, { Job } from 'node-schedule'
 import chalk from 'chalk'
 import moment, { Moment } from 'moment'
 import Bot from '@/services/Bot'
+import accessObjPath from '@/util/accessObjPath'
+import logger from '@/util/logger'
 
 const loadFromInfo = Symbol('loadFromInfo')
 const unloadFromId = Symbol('unloadFromId')
@@ -27,12 +29,12 @@ export default function createJobManager(this: Bot) {
     let isLate = +checkIfLate(jobInfo.when, 10000)
     if (isLate && fromInit) isLate += 1
 
-    const handler = this.accessObjPath(this, jobInfo.handlerPath, true)
+    const handler = accessObjPath(this, jobInfo.handlerPath, true)
     try {
       if (typeof handler === 'function') { handler(jobInfo.data, isLate) }
-      this.logger.error(`JOB:${jobInfo.handlerPath}`, 'Handler path does not exist')
+      logger.error(`JOB:${jobInfo.handlerPath}`, 'Handler path does not exist')
     } catch (error) {
-      this.logger.error(`JOB:${jobInfo.handlerPath}`, error)
+      logger.error(`JOB:${jobInfo.handlerPath}`, error)
     }
   }
   const jobManager = {
@@ -81,7 +83,7 @@ export default function createJobManager(this: Bot) {
       }
     })
     const j = jobs.length
-    this.logger.log('JOBS', chalk`Scheduled and loaded {green.bold ${j.toString()}} job${j === 1 ? '' : 's'} from storage`)
+    logger.log('JOBS', chalk`Scheduled and loaded {green.bold ${j.toString()}} job${j === 1 ? '' : 's'} from storage`)
   })
 
   return jobManager

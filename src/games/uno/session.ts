@@ -2,6 +2,7 @@ import GameSession from '@/services/GameSession'
 import Deck from '@/services/Deck'
 import deckData from '@/services/data/uno.deck'
 import { Message } from 'eris'
+import transformText from '@/util/text'
 
 const cardSelPattern = /^(r(?:ed)?|y(?:ellow)?|g(?:reen)?|b(?:lue)?) *([0-9]|skip|reverse|\+2|wild(?: *\+4)?)$/i
 const cardColors = {
@@ -39,7 +40,7 @@ export default class UnoSession extends GameSession {
     const handCards: typeof deckData.deck = Deck.fromIndexes(deckData.deck, cardIndexes)
 
     const serializedHand = handCards.map(c => {
-      const color = this.ctx.transformText(c.color, 'capitalize')
+      const color = transformText(c.color, 'capitalize')
       const name = c.type.toUpperCase()
       return `**${color} ${name}**`.replace('* ', '')
     })
@@ -57,7 +58,7 @@ export default class UnoSession extends GameSession {
     const { data } = this
     if (!data.initialized) return
     const card = deckData.deck[cardIndex]
-    const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
+    const colorDisplay = transformText(colorNames[data.pileColor], 'capitalize')
     const curPlayer = this.players[data.turn]
     let comment = `<@${player}> has played a **${colorDisplay} ${card.type.toUpperCase()}**.`
     switch (card.type) {
@@ -97,7 +98,7 @@ export default class UnoSession extends GameSession {
     const { data } = this
     if (!data.initialized) return
     const card = deckData.deck[data.pile[0]]
-    const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
+    const colorDisplay = transformText(colorNames[data.pileColor], 'capitalize')
     let outComment = comment
     if (!outComment) {
       const curPlayer = this.players[data.turn]
@@ -337,7 +338,7 @@ export default class UnoSession extends GameSession {
     const { data } = this
     if (!data.initialized) return
     const card = deckData.deck[data.pile[0]]
-    const colorDisplay = this.ctx.transformText(colorNames[data.pileColor], 'capitalize')
+    const colorDisplay = transformText(colorNames[data.pileColor], 'capitalize')
     await this.showTable(`<@${winner}> won the game with a **${colorDisplay} ${card.type.toUpperCase()}**!`)
     await this.destroyGame(winner)
   }

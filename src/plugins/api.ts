@@ -1,4 +1,5 @@
 import Bot from '@/services/Bot'
+import logger from '@/util/logger'
 import chalk from 'chalk'
 import fastify from 'fastify'
 import cors from 'fastify-cors'
@@ -15,7 +16,7 @@ export default function createApi(this: Bot) {
 
   api.listen(process.env.API_PORT, '0.0.0.0', (error, address) => {
     if (error) throw error
-    this.logger.log('API', chalk`Server listening on {cyan.bold ${address}}`)
+    logger.log('API', chalk`Server listening on {cyan.bold ${address}}`)
   })
 
   return api

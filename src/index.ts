@@ -6,6 +6,7 @@ require('source-map-support').install()
 import * as Sentry from '@sentry/node'
 import * as Tracing from '@sentry/tracing'
 import Bot from './services/Bot'
+import logger from './util/logger'
 
 if (process.env.SENTRY_DSN) {
   Sentry.init({
@@ -20,6 +21,6 @@ const initTxn = Sentry.startTransaction({
 })
 
 bot.once('init', () => {
-  bot.logger.log('BOT', 'Initialized')
+  logger.log('BOT', 'Initialized')
   initTxn.finish()
 })

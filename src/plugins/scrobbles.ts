@@ -3,6 +3,7 @@ import btoa from 'btoa'
 import Bot from '@/services/Bot'
 import chalk from 'chalk'
 import moment from 'moment'
+import logger from '@/util/logger'
 
 const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env
 
@@ -129,7 +130,7 @@ export default function initScrobbles(this: Bot) {
     if (scrobbleGuild) {
       scrobbleGuild.fetchAllMembers(20000).then(n => {
         const s = n === 1 ? '' : 's'
-        this.logger.log('SCROBBLE', chalk`Requested and received {green.bold ${n.toString()}} guild member${s}`)
+        logger.log('SCROBBLE', chalk`Requested and received {green.bold ${n.toString()}} guild member${s}`)
       })
     }
   })

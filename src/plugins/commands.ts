@@ -10,6 +10,7 @@ import PingCommand from '@/commands/ping'
 import RemindCommand from '@/commands/remind'
 import Command, { CommandArgs } from '@/services/Command'
 import BdayCommand from '@/commands/birthday'
+import logger from '@/util/logger'
 import { Priority } from './msgq'
 
 export interface Commands {
@@ -50,12 +51,12 @@ export default function registerCommands(this: Bot) {
         try {
           command.msg(msg, args)
         } catch (err) {
-          this.logger.error(`CMD:${command.name}`, err)
+          logger.error(`CMD:${command.name}`, err)
         }
-        if (!command.isSilent) { this.logger.cmd(msg.content, msg) }
+        if (!command.isSilent) { logger.cmd(msg.content, msg) }
       }
     }
   })
-  this.logger.log('CMD', chalk`Listening to commands with prefix {magenta.bold ${process.env.PREFIX}}`)
+  logger.log('CMD', chalk`Listening to commands with prefix {magenta.bold ${process.env.PREFIX}}`)
   return commands
 }

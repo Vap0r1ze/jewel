@@ -1,4 +1,6 @@
 import Bot from '@/services/Bot'
+import accessObjPath from '@/util/accessObjPath'
+import logger from '@/util/logger'
 import { Emoji, Member, Message } from 'eris'
 
 export default function reactMenuAdd(
@@ -12,11 +14,11 @@ export default function reactMenuAdd(
   if (menuInfo) {
     Object.entries(menuInfo.emojis).forEach(([choiceId, emoji]) => {
       if (emoji === (emojiId ? `${emojiName}:${emojiId}` : emojiName)) {
-        const handler = this.accessObjPath(this, menuInfo.handlerPath, true)
+        const handler = accessObjPath(this, menuInfo.handlerPath, true)
         try {
           if (typeof handler === 'function') handler(choiceId, user.id, false)
         } catch (error) {
-          this.logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error)
+          logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error)
         }
       }
     })

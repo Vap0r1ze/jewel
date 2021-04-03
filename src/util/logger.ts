@@ -3,7 +3,7 @@ import dateFormat from 'dateformat'
 import { Message } from 'eris'
 import * as Sentry from '@sentry/node'
 
-export default {
+const logger = {
   format: '[hh:MM:ss TT]',
   get time(): string {
     return dateFormat(new Date(), this.format)
@@ -27,3 +27,5 @@ export default {
     }
   },
 }
+
+export default logger

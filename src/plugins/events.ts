@@ -8,6 +8,7 @@ import reactMenuRemove from '@/events/messageReactionRemove/reactMenu'
 import reactMenuAdd from '@/events/messageReactionAdd/reactMenu'
 import welcome from '@/events/guildMemberAdd/welcome'
 import welcomeRole from '@/events/guildMemberUpdate/welcome'
+import logger from '@/util/logger'
 
 export interface EventHandler {
   event: string;
@@ -36,7 +37,7 @@ export default function registerEventHandlers(this: Bot) {
     }
   })
   const e = evtHandlers.map(h => h.event).filter((o, i, a) => a.indexOf(o) === i).length
-  this.logger.log('EVT', chalk`Listening to {green.bold ${e.toString()}} event${e === 1 ? '' : 's'}`
+  logger.log('EVT', chalk`Listening to {green.bold ${e.toString()}} event${e === 1 ? '' : 's'}`
     + chalk` with {green.bold ${evtHandlers.length.toString()}} handler${evtHandlers.length === 1 ? '' : 's'}`)
   return evtHandlers
 }

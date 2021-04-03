@@ -1,4 +1,5 @@
 import { SessionInfoBasic } from '@/plugins/games'
+import logger from '@/util/logger'
 import { Message, MessageContent } from 'eris'
 import Bot from './Bot'
 
@@ -99,7 +100,7 @@ export default class GameSession {
     // eslint-disable-next-line no-restricted-syntax
     for (const user of users) {
       if (!user) {
-        this.ctx.logger.warn('GAME', 'undefined user passed to GameSession#broadcastChat')
+        logger.warn('GAME', 'undefined user passed to GameSession#broadcastChat')
         continue
       }
       try {
@@ -268,7 +269,7 @@ export default class GameSession {
                   })
                   this.startGame()
                 }).catch(error => {
-                  this.ctx.logger.error('GAME', error)
+                  logger.error('GAME', error)
                   this.ctx.client.createMessage(this.poolChannelId, {
                     embed: {
                       color: 0xFF0000,

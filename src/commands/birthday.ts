@@ -1,3 +1,4 @@
+import transformText from '@/util/text'
 import { Message } from 'eris'
 import moment from 'moment'
 import Command, { CommandArgs } from '../services/Command'
@@ -53,7 +54,7 @@ export default class BdayCommand extends Command {
       const profile = this.ctx.profiles.getProfile(msg.author.id)
       if (profile.birthday) {
         const [month, date] = profile.birthday
-        const bdayDisplay = `${this.ctx.transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
+        const bdayDisplay = `${transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
         msg.channel.createMessage(`Your birthday is set as **${bdayDisplay}**`)
       } else {
         msg.channel.createMessage(`Your birthday has not been set yet, try \`${process.env.PREFIX}help birthday\` to see how to set yours`)
@@ -131,7 +132,7 @@ export default class BdayCommand extends Command {
       return
     }
 
-    const bdayDisplay = `${this.ctx.transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
+    const bdayDisplay = `${transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
     msg.channel.createMessage(`✅  |  Your birthday has been set to **${bdayDisplay}**`)
     profile.initBirthday(true)
   }

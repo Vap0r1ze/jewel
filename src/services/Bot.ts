@@ -1,8 +1,4 @@
 import { EventEmitter } from 'events'
-// Util
-import accessObjPath from '@/util/accessObjPath'
-import logger from '@/util/logger'
-import transformText from '@/util/text'
 // Plugins
 import createApi from '@/plugins/api'
 import createClient from '@/plugins/eris'
@@ -18,12 +14,6 @@ import { createMsgqManager } from '@/plugins/msgq'
 import createProfileManager from '@/plugins/profiles'
 
 export default class Bot extends EventEmitter {
-  logger = logger
-
-  accessObjPath = accessObjPath
-
-  transformText = transformText
-
   api = createApi.call(this)
 
   client = createClient.call(this)

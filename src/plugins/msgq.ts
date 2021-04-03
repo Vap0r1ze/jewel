@@ -1,4 +1,5 @@
 import Bot from '@/services/Bot'
+import logger from '@/util/logger'
 import { everyLimit } from 'async'
 import { Message } from 'eris'
 
@@ -46,7 +47,7 @@ export function createMsgqManager(this: Bot) {
       })
     }, error => {
       if (error) {
-        this.logger.error('MSGQ', error)
+        logger.error('MSGQ', error)
       }
     })
   })

@@ -3,6 +3,7 @@ import UnoGame from '@/games/uno/game'
 import Bot from '@/services/Bot'
 import Game from '@/services/Game'
 import GameSession from '@/services/GameSession'
+import logger from '@/util/logger'
 import chalk from 'chalk'
 
 export interface SessionInfo<GameConfig, GameData> {
@@ -47,7 +48,7 @@ export default function registerGames(this: Bot) {
 
   const g = Object.values(games).length
   const s = Object.values(gameSessions).length
-  this.logger.log('GAME', chalk`Registered {green.bold ${g.toString()}} game${g === 1 ? '' : 's'},`
+  logger.log('GAME', chalk`Registered {green.bold ${g.toString()}} game${g === 1 ? '' : 's'},`
     + chalk` and loaded {green.bold ${s.toString()}} session${s === 1 ? '' : 's'} from storage`)
 
   return { games, gameSessions }

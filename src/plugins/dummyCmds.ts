@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import Bot from '@/services/Bot'
+import logger from '@/util/logger'
 import dummyCmds from '../services/data/dummyCmds'
 import Command from '../services/Command'
 
@@ -51,5 +52,5 @@ export default function initDummyCmds(this: Bot) {
       i += 1
     })
   })
-  this.logger.log('DMY', chalk`Registered {green.bold ${i.toString()}} dummy commands`)
+  logger.log('DMY', chalk`Registered {green.bold ${i.toString()}} dummy commands`)
 }

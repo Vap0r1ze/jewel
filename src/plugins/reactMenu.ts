@@ -1,4 +1,5 @@
 import Bot from '@/services/Bot'
+import logger from '@/util/logger'
 import { queue } from 'async'
 import chalk from 'chalk'
 
@@ -49,6 +50,6 @@ export default function createMenuManager(this: Bot) {
   })
 
   const m = Object.keys(menus).length
-  this.logger.log('MENU', chalk`Loaded {green.bold ${m.toString()}} react menu${m === 1 ? '' : 's'} from storage`)
+  logger.log('MENU', chalk`Loaded {green.bold ${m.toString()}} react menu${m === 1 ? '' : 's'} from storage`)
   return menus
 }
