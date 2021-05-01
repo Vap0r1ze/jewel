@@ -3,7 +3,7 @@ import { Message } from 'eris'
 import moment from 'moment'
 import Command, { CommandArgs } from '../services/Command'
 
-const bdayPattern = /(jan(?:uary)?|feb(?:r?uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?) *,? *(\d+) *(?:th)?(?:,? *\d+)?|(\d+) *[ \-//] *(\d+)(?: *[ \-//] *(?:\d+))?/i
+const bdayPattern = /(?:<@!?(\d{16,20})>|(\d{16,20}))? *(jan(?:uary)?|feb(?:r?uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?) *,? *(\d+) *(?:th)?(?:,? *\d+)?|(\d+) *[ \-//] *(\d+)(?: *[ \-//] *(?:\d+))?/i
 
 const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 const monthNamesFull = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
@@ -48,6 +48,7 @@ export default class BdayCommand extends Command {
   }
 
   handle(msg: Message, args: CommandArgs) {
+    if (msg.channel.type !== 0) return
     const isDeveloper = process.env.DEVELOPERS.includes(msg.author.id)
 
     if (args.raw.trim().length === 0) {
@@ -66,9 +67,23 @@ export default class BdayCommand extends Command {
     let month: number
     let date: number
     if (!match) {
-      // stuff
+      msg.channel.createMessage(`I hope there isn't a place where that is a valid date, try \`${process.env.PREFIX}help birthday\` to see example usage.`)
       return
     }
+
+    const idMatches = match.splice(1, 2)
+    const selectedId = idMatches[0] || idMatches[1]
+    if (selectedId && !isDeveloper) {
+      msg.channel.createMessage('Only a developer can set another user\'s birthday.')
+      return
+    }
+
+    const selectedMember = msg.channel.guild.members.get(selectedId)
+    if (selectedId && !selectedMember) {
+      msg.channel.createMessage('I wasn\'t able to find that member.')
+      return
+    }
+
     if (match[1] && match[2]) { // MMMM dd
       const [, monthName, dateStr] = match
       month = monthNames.indexOf(monthName.toLowerCase().slice(0, 3))
@@ -108,7 +123,7 @@ export default class BdayCommand extends Command {
       return
     }
 
-    const profile = this.ctx.profiles.getProfile(msg.author.id)
+    const profile = this.ctx.profiles.getProfile(selectedId)
     const oldBday = profile.birthday
     profile.setBirthday([month, date])
 
@@ -133,7 +148,11 @@ export default class BdayCommand extends Command {
     }
 
     const bdayDisplay = `${transformText(monthNamesFull[month], 'capitalize')} ${date}${nth(date)}`
-    msg.channel.createMessage(`✅  |  Your birthday has been set to **${bdayDisplay}**`)
+    msg.channel.createMessage(`✅  |  ${
+      !selectedMember || selectedMember.id === msg.author.id
+        ? 'Your'
+        : `**${selectedMember.username}**'s`
+    } birthday has been set to **${bdayDisplay}**`)
     profile.initBirthday(true)
   }
 }
