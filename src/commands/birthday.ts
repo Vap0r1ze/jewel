@@ -123,7 +123,7 @@ export default class BdayCommand extends Command {
       return
     }
 
-    const profile = this.ctx.profiles.getProfile(selectedId)
+    const profile = this.ctx.profiles.getProfile(selectedId || msg.author.id)
     const oldBday = profile.birthday
     profile.setBirthday([month, date])
 
