@@ -235,6 +235,7 @@ export default class UnoSession extends GameSession {
             const pileCard = deckData.deck[data.pile[0]]
             if (card.color !== '*') {
               if (card.color[0] !== data.pileColor && card.type !== pileCard.type) {
+                hand.splice(cardHandIndex, 0, cardIndex)
                 msg.channel.createMessage('**That card doesn\'t match the last played card!**')
                 return
               }
