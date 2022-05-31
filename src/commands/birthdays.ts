@@ -7,7 +7,7 @@ const AMOUNT = 5
 
 export default class BdaysCommand extends Command {
   get name() {
-    return 'upcomingbdays'
+    return 'birthdays'
   }
 
   get category() {
@@ -19,7 +19,7 @@ export default class BdaysCommand extends Command {
   }
 
   get aliases() {
-    return ['upcomingbirthdays', 'birthdays', 'bdays']
+    return ['bdays']
   }
 
   get permissions() {
@@ -51,6 +51,10 @@ export default class BdaysCommand extends Command {
 
       const date = moment(`${(profile.birthday[0] + 1)}/${profile.birthday[1]}`)
       const dateStr = `${date.format('MMM')} ${date.format('D').padStart(2, ' ')}`
+
+      if (!bdayMap[dateStr]) bdayMap[dateStr] = []
+
+      bdayMap[dateStr]?.push(profile)
 
       if (!profile) break
     }
