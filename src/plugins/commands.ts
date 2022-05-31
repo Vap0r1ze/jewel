@@ -10,7 +10,7 @@ import PingCommand from '@/commands/ping'
 import RemindCommand from '@/commands/remind'
 import Command, { CommandArgs } from '@/services/Command'
 import BdayCommand from '@/commands/birthday'
-import BdaysCommand from '@/commands/birthdays'
+// import BdaysCommand from '@/commands/birthdays'
 import logger from '@/util/logger'
 import { Priority } from './msgq'
 
@@ -22,7 +22,7 @@ export default function registerCommands(this: Bot) {
   const cmdsPath = resolve(__dirname, '../commands')
   if (!fs.existsSync(cmdsPath)) { fs.mkdirSync(cmdsPath) }
   const commands: Commands = {
-    birthdays: new BdaysCommand(this),
+    // birthdays: new BdaysCommand(this),
     birthday: new BdayCommand(this),
     eval: new EvalCommand(this),
     games: new GamesCommand(this),
