@@ -17,7 +17,9 @@ declare namespace NodeJS {
     SPOTIFY_CLIENT_SECRET: string;
     SCROBBLE_GUILD: string;
     SCROBBLE_ROLES: string;
+    BDAY_CHANNEL: string;
     BDAY_GUILD: string;
+    BDAY_MESSAGES: string;
     BDAY_ROLES: string;
     WELCOME_ROLES: string;
     WELCOME_CHANNELS: string;

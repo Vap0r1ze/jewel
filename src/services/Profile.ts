@@ -5,6 +5,7 @@ import moment from 'moment'
 import Bot from './Bot'
 
 const bdayRoles: string[] = JSON.parse(process.env.BDAY_ROLES)
+const bdayMessages: string[] = JSON.parse(process.env.BDAY_MESSAGES)
 
 export default class Profile implements ProfileData {
   ctx: Bot
@@ -79,6 +80,12 @@ export default class Profile implements ProfileData {
     const missingRoles = bdayRoles.filter(id => !member.roles.includes(id))
 
     await member.edit({ roles: [...member.roles, ...missingRoles] })
+
+    const channel = guild.channels.get(process.env.BDAY_CHANNEL)
+    if (channel && channel.type === 0) {
+      const bdayMsg = bdayMessages[Math.floor(Math.random() * bdayMessages.length)]
+      await channel.createMessage(bdayMsg.replace('{USER}', member.mention))
+    }
 
     this.birthdayLastUsed = Date.now()
     this.saveData()
