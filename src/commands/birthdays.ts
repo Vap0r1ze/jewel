@@ -5,7 +5,7 @@ import Command from '../services/Command'
 
 const AMOUNT = 5
 
-export default class BdayCommand extends Command {
+export default class BdaysCommand extends Command {
   get name() {
     return 'upcomingbdays'
   }
