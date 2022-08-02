@@ -18,7 +18,7 @@ export default function reactMenuRemove(
         try {
           if (typeof handler === 'function') handler(choiceId, userId, true)
         } catch (error) {
-          logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error)
+          logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error as Error)
         }
       }
     })

@@ -51,7 +51,7 @@ export default function registerCommands(this: Bot) {
         try {
           command.msg(msg, args)
         } catch (err) {
-          logger.error(`CMD:${command.name}`, err)
+          logger.error(`CMD:${command.name}`, err as Error)
         }
         if (!command.isSilent) { logger.cmd(msg.content, msg) }
       }

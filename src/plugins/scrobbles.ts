@@ -118,7 +118,7 @@ export default function initScrobbles(this: Bot) {
           expiresAt,
         }
       } catch (err) {
-        if (err.response) { console.error(err.response.body) } else { console.log(err) }
+        if (err) { console.log(err) }
         return { token: null, type: null }
       }
     }

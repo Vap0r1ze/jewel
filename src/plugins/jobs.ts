@@ -34,7 +34,7 @@ export default function createJobManager(this: Bot) {
       if (typeof handler === 'function') { handler(jobInfo.data, isLate) }
       logger.error(`JOB:${jobInfo.handlerPath}`, 'Handler path does not exist')
     } catch (error) {
-      logger.error(`JOB:${jobInfo.handlerPath}`, error)
+      logger.error(`JOB:${jobInfo.handlerPath}`, error as Error)
     }
   }
   const jobManager = {

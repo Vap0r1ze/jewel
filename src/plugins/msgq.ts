@@ -1,5 +1,6 @@
 import Bot from '@/services/Bot'
 import logger from '@/util/logger'
+import { isMessageCached } from '@/util/typeCheck'
 import { everyLimit } from 'async'
 import { Message } from 'eris'
 
@@ -7,7 +8,10 @@ export const enum Priority {
   Commands,
 }
 
-export type MessageConsumerHandler = ((msg: Message, next: () => void) => Promise<void> | void)
+export type MessageConsumerHandler = ((
+  msg: Message,
+  next: () => void
+) => Promise<void> | void)
 | ((msg: Message) => Promise<void> | void)
 export interface Consumer {
   id: string;
@@ -41,6 +45,7 @@ export function createMsgqManager(this: Bot) {
   }
 
   this.client.on('messageCreate', msg => {
+    if (!isMessageCached(msg)) return
     everyLimit(msgqManager[consumers], 1, async (consumer, callback) => {
       await consumer.handler(msg, () => {
         callback(null, true)

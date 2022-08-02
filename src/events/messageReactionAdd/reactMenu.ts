@@ -18,7 +18,7 @@ export default function reactMenuAdd(
         try {
           if (typeof handler === 'function') handler(choiceId, user.id, false)
         } catch (error) {
-          logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error)
+          logger.error(`MENU:${menuInfo.handlerPath}:${choiceId}`, error as Error)
         }
       }
     })
