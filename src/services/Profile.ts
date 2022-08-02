@@ -2,6 +2,7 @@ import { ProfileData } from '@/plugins/profiles'
 import schedule from 'node-schedule'
 import { table } from 'quick.db'
 import moment from 'moment'
+import { format } from 'util'
 import Bot from './Bot'
 
 const bdayRoles: string[] = JSON.parse(process.env.BDAY_ROLES)
@@ -94,8 +95,14 @@ export default class Profile implements ProfileData {
   async onBirthdayEnd() {
     const guild = this.ctx.client.guilds.get(process.env.BDAY_GUILD)
     if (!guild) return
-    const [member] = await guild.fetchMembers({ userIDs: [this.id] })
+
+    const memberSearch = await guild.fetchMembers({ userIDs: [this.id] })
+    if (typeof memberSearch[Symbol.iterator] !== 'function') {
+      throw new TypeError(format('%O is not iterable', memberSearch))
+    }
+    const [member] = memberSearch
     if (!member) return
+
     if (!bdayRoles.every(id => member.roles.includes(id))) return
 
     const nonBdayRoles = member.roles.filter(id => !bdayRoles.includes(id))
