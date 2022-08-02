@@ -12,6 +12,6 @@ export default function accessObjPath(
     parentValue = value
     value = value[key]
   }
-  if (typeof value === 'function' && bindFunctionContext) return value.bind(parentValue) as Function
+  if (typeof value === 'function' && bindFunctionContext) return value.bind(parentValue)
   return value
 }

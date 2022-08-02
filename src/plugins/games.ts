@@ -20,7 +20,7 @@ export interface SessionInfo<GameConfig, GameData> {
   spectators: string[];
   data: GameData;
 }
-export type SessionInfoBasic = SessionInfo<{}, {}>
+export type SessionInfoBasic = SessionInfo<Record<string, unknown>, Record<string, unknown>>
 
 export default function registerGames(this: Bot) {
   const db = this.getDB('games')

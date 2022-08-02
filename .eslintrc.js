@@ -15,6 +15,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/semi': [2, 'never'],
     'arrow-parens': ['error', 'as-needed'],
     'class-methods-use-this': 'off',
@@ -23,6 +24,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-continue': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-shadow': 'off',
     'no-sparse-arrays': 'off',
     'prefer-destructuring': ['error', {
       'VariableDeclarator': {

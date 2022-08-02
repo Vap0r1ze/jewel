@@ -109,7 +109,6 @@ export default function initScrobbles(this: Bot) {
         const data = await httpReqBody('post', 'https://accounts.spotify.com/api/token', {
           Authorization: `Basic ${btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`)}`,
         }, {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           grant_type: 'client_credentials',
         }, 'form')
         const expiresAt = now + (data.expires_in - 5) * 1000
