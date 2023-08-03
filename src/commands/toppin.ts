@@ -88,6 +88,8 @@ export async function doTopPinCheck(ctx: Bot, channel: TextableChannel) {
     if (pins[0].id === topPinnedMessageId) return
 
     const topPinnedMessage = await channel.getMessage(topPinnedMessageId)
-    await topPinnedMessage.unpin()
-    await topPinnedMessage.pin()
+    await topPinnedMessage.unpin().catch(() => {})
+    await topPinnedMessage.pin().catch(() => {
+        console.warn('Failed to pin message in ', channel.id)
+    })
 }
