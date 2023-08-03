@@ -1,4 +1,4 @@
-import { GuildTextableChannel, Message } from 'eris'
+import { GuildTextableChannel, Message, TextableChannel } from 'eris'
 import Command, { CommandArgs } from '../services/Command'
 import type Bot from '@/services/Bot'
 
@@ -33,7 +33,8 @@ export default class TopPinCommand extends Command {
     return ['pin']
   }
 
-  async handle(msg: Message<GuildTextableChannel>, args: CommandArgs) {
+  async handle(msg: Message, args: CommandArgs) {
+    if (msg.channel.type !== 0) return
     const { PREFIX } = process.env
     const db = this.ctx.getDB('toppins')
 
@@ -72,7 +73,8 @@ export default class TopPinCommand extends Command {
   }
 }
 
-export async function doTopPinCheck(ctx: Bot, channel: GuildTextableChannel) {
+export async function doTopPinCheck(ctx: Bot, channel: TextableChannel) {
+    if (channel.type !== 0) return
     const db = ctx.getDB('toppins')
     const isDisabled = !db.get(channel.id)
     const topPinnedMessageId = db.get(`${channel.id}:message`)
