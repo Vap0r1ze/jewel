@@ -69,7 +69,7 @@ export default class TopPinCommand extends Command {
         const willEnable = !db.get(channel.id)
         db.set(channel.id, willEnable)
         let replyForToggle = `Top-pinning has been ${willEnable ? 'enabled' : 'disabled'} for ${channel.mention}`
-        if (!db.get(`${channel.id}:message`)) replyForToggle += '\n**Note:** There is no top-pinned message set for this channel yet so go ahead and set one'
+        if (!db.get(`${channel.id}:message`) && willEnable) replyForToggle += '\n**Note:** There is no top-pinned message set for this channel yet so go ahead and set one'
         await msg.channel.createMessage(replyForToggle)
     }
 
