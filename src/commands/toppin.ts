@@ -78,16 +78,13 @@ export default class TopPinCommand extends Command {
 }
 
 export async function doTopPinCheck(ctx: Bot, channel: TextableChannel) {
-    console.log('doTopPinCheck')
     if (channel.type !== 0) return
     const db = ctx.getDB('toppins')
     const isDisabled = !db.get(channel.id)
     const topPinnedMessageId = db.get(`${channel.id}:message`)
-    console.log({ isDisabled, topPinnedMessageId })
     if (isDisabled || !topPinnedMessageId) return
 
     const pins = await channel.getPins()
-    console.log(pins.map(pin => pin.id))
     if (pins[0].id === topPinnedMessageId) return
 
     const topPinnedMessage = await channel.getMessage(topPinnedMessageId).catch(() => null)
