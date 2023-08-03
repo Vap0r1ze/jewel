@@ -6,17 +6,11 @@ export default class HelpCommand extends Command {
     return 'help'
   }
 
-  get usage() {
-    return '[command]'
-  }
-
-  get aliases() {
-    return ['h']
-  }
-
   get description() {
     return 'List all of the available commands or get more information about a specific command'
   }
+
+  get isHidden() { return true }
 
   handle(msg: Message, args: CommandArgs) {
     const { PREFIX } = process.env
