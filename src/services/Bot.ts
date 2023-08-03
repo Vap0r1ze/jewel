@@ -5,7 +5,6 @@ import createClient from '@/plugins/eris'
 import getDB from '@/plugins/db'
 import createJobManager from '@/plugins/jobs'
 import registerCommands from '@/plugins/commands'
-import initDummyCmds from '@/plugins/dummyCmds'
 import registerEventHandlers from '@/plugins/events'
 import createMenuManager from '@/plugins/reactMenu'
 import registerGames from '@/plugins/games'
@@ -39,7 +38,6 @@ export default class Bot extends EventEmitter {
   constructor() {
     super()
 
-    initDummyCmds.call(this)
     initScrobbles.call(this)
 
     const { games, gameSessions } = registerGames.call(this)
