@@ -84,13 +84,18 @@ export async function doTopPinCheck(ctx: Bot, channel: TextableChannel) {
     const isDisabled = !db.get(channel.id)
     const topPinnedMessageId = db.get(`${channel.id}:message`)
     console.log({ isDisabled, topPinnedMessageId })
-    if (isDisabled || topPinnedMessageId) return
+    if (isDisabled || !topPinnedMessageId) return
 
     const pins = await channel.getPins()
     console.log(pins.map(pin => pin.id))
     if (pins[0].id === topPinnedMessageId) return
 
-    const topPinnedMessage = await channel.getMessage(topPinnedMessageId)
+    const topPinnedMessage = await channel.getMessage(topPinnedMessageId).catch(() => null)
+    if (!topPinnedMessage) {
+        console.warn('Failed to get top-pinned message in ', channel.id)
+        db.delete(`${channel.id}:message`)
+        return
+    }
     await topPinnedMessage.unpin().catch(() => {})
     await topPinnedMessage.pin().catch(() => {
         console.warn('Failed to pin message in ', channel.id)
