@@ -8,10 +8,12 @@ import GitHubCommand from '@/commands/gh'
 import HelpCommand from '@/commands/help'
 import PingCommand from '@/commands/ping'
 import RemindCommand from '@/commands/remind'
+import SHelpCommand from '@/commands/shelp'
 import Command, { CommandArgs } from '@/services/Command'
 import BdayCommand from '@/commands/birthday'
 import logger from '@/util/logger'
 import { Priority } from './msgq'
+import TopPinCommand from '@/commands/toppin'
 
 export interface Commands {
   [name: string]: Command;
@@ -28,6 +30,8 @@ export default function registerCommands(this: Bot) {
     help: new HelpCommand(this),
     ping: new PingCommand(this),
     remind: new RemindCommand(this),
+    shelp: new SHelpCommand(this),
+    toppin: new TopPinCommand(this),
   }
   this.msgq.registerConsumer('commands', Priority.Commands, (msg, next) => {
     if (msg.channel.type !== 0 || msg.author.bot) {
