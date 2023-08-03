@@ -9,6 +9,8 @@ import reactMenuAdd from '@/events/messageReactionAdd/reactMenu'
 import welcome from '@/events/guildMemberAdd/welcome'
 import welcomeRole from '@/events/guildMemberUpdate/welcome'
 import logger from '@/util/logger'
+import topPin from '@/events/channelPinUpdate/topPin'
+import selfPinEvent from '@/events/messageCreate/selfPin'
 
 export interface EventHandler {
   event: string;
@@ -26,6 +28,8 @@ export default function registerEventHandlers(this: Bot) {
     { event: 'messageReactionAdd', handler: reactMenuAdd },
     { event: 'messageReactionRemove', handler: reactMenuRemove },
     { event: 'presenceUpdate', handler: recordScrobble },
+    { event: 'channelPinUpdate', handler: topPin },
+    { event: 'messageCreate', handler: selfPinEvent },
   ]
   events.forEach(event => {
     if (evtHandlers.length) {
