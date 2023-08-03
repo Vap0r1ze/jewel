@@ -50,10 +50,14 @@ export default class TopPinCommand extends Command {
 
     const channel = msg.channel.guild.channels.get(channelId)
 
-    if (!channel) return msg.channel.createMessage('I cannot see that channel')
+    if (!channel) return msg.channel.createMessage('That channel does not exist')
     if (channel.type !== 0) return msg.channel.createMessage('That is not a text channel')
-    if (!channel.permissionsOf(this.ctx.client.user.id).has('manageMessages'))
+
+    const botPerms = channel.permissionsOf(this.ctx.client.user.id)
+    if (!botPerms.has('manageMessages'))
         return msg.channel.createMessage('I do not have permission to manage messages in that channel')
+    if (!botPerms.has('viewChannel'))
+        return msg.channel.createMessage('I do not have permission to view that channel')
 
     if (messageId) {
         const message = await channel.getMessage(messageId).catch(() => null)
