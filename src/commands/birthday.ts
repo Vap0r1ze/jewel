@@ -136,7 +136,7 @@ export default class BdayCommand extends Command {
     // 30 days in advance check
     if (!isDeveloper && profile.bdayMoment.diff(Date.now(), 'months') < 1) {
       profile.setBirthday(oldBday)
-      msg.channel.createMessage('You must set your birthday a month in advance (this is in order to prevent abuse). If your birthday is within a month, DM `Vap0r1ze#0126` and ask him to set your birthday.')
+      msg.channel.createMessage('You must set your birthday a month in advance (this is in order to prevent abuse). If your birthday is within a month, DM or ping `@vap0r1ze` and ask for your birthday to be set.')
       return
     }
 
