@@ -1,5 +1,5 @@
 import fs from 'fs'
-import chalk from 'chalk'
+import chalk from 'chalk-template'
 import { resolve } from 'path'
 import EvalCommand from '@/commands/eval'
 import Bot from '@/services/Bot'

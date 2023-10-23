@@ -1,8 +1,8 @@
-import { ProfileData } from '@/plugins/profiles'
 import schedule from 'node-schedule'
 import { table } from 'quick.db'
 import moment from 'moment'
 import { format } from 'util'
+import { ProfileData } from '@/plugins/profiles'
 import Bot from './Bot'
 
 const bdayRoles: string[] = JSON.parse(process.env.BDAY_ROLES)

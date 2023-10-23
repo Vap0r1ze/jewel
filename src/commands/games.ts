@@ -1,5 +1,5 @@
-import Game from '@/services/Game'
 import { Message } from 'eris'
+import Game from '@/services/Game'
 import Command from '../services/Command'
 
 export default class GamesCommand extends Command {

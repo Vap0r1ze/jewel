@@ -1,8 +1,8 @@
+import { everyLimit } from 'async'
+import { Message } from 'eris'
 import Bot from '@/services/Bot'
 import logger from '@/util/logger'
 import { isMessageCached } from '@/util/typeCheck'
-import { everyLimit } from 'async'
-import { Message } from 'eris'
 
 export const enum Priority {
   Commands,

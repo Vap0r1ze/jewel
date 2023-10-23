@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "ES2022",
     "module": "commonjs",
     "strict": true,
     "importHelpers": true,
@@ -23,6 +23,7 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    ".eslintrc.js"
   ]
 }

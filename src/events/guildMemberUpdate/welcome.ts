@@ -1,5 +1,5 @@
-import Bot from '@/services/Bot'
 import { Guild, Member } from 'eris'
+import Bot from '@/services/Bot'
 import welcome from '../guildMemberAdd/welcome'
 
 const welcomeRoles: string[] = JSON.parse(process.env.WELCOME_ROLES)

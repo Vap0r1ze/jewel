@@ -1,5 +1,5 @@
-import Bot from '@/services/Bot'
 import { Member, Relationship } from 'eris'
+import Bot from '@/services/Bot'
 
 export default function recordScrobble(this: Bot, member: Member | Relationship) {
   if (member instanceof Relationship) return

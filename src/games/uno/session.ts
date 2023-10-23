@@ -1,7 +1,7 @@
+import { Message } from 'eris'
 import GameSession from '@/services/GameSession'
 import Deck from '@/services/Deck'
 import deckData from '@/services/data/uno.deck'
-import { Message } from 'eris'
 import transformText from '@/util/text'
 
 const cardSelPattern = /^(r(?:ed)?|y(?:ellow)?|g(?:reen)?|b(?:lue)?) *([0-9]|skip|reverse|\+2|wild(?: *\+4)?)$/i
@@ -23,9 +23,9 @@ export interface UnoData {
 }
 
 export default class UnoSession extends GameSession {
-  gameConfig!: import('@/games/uno/game').default['defaultConfig']
+  declare gameConfig: import('@/games/uno/game').default['defaultConfig']
 
-  data!: UnoData | { initialized?: false }
+  declare data: UnoData | { initialized?: false }
 
   wrapTurn(turn: number, p: number) {
     return turn - Math.floor(turn / p) * p

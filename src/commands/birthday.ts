@@ -1,6 +1,6 @@
-import transformText from '@/util/text'
 import { Message } from 'eris'
 import moment from 'moment'
+import transformText from '@/util/text'
 import Command, { CommandArgs } from '../services/Command'
 
 const bdayPattern = /(?:<@!?(\d{16,20})>|(\d{16,20}))? *(jan(?:uary)?|feb(?:r?uary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?) *,? *(\d+) *(?:th)?(?:,? *\d+)?|(\d+) *[ \-//] *(\d+)(?: *[ \-//] *(?:\d+))?/i

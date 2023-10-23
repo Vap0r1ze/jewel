@@ -1,7 +1,7 @@
+import chalk from 'chalk-template'
 import Bot from '@/services/Bot'
 import Profile from '@/services/Profile'
 import logger from '@/util/logger'
-import chalk from 'chalk'
 
 export interface ProfileData {
   id: string;

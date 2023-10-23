@@ -1,6 +1,6 @@
+import { Message } from 'eris'
 import { SessionInfoBasic } from '@/plugins/games'
 import Bot from '@/services/Bot'
-import { Message } from 'eris'
 
 export default function dmEvent(this: Bot, msg: Message) {
   if (msg.channel.type !== 1 || msg.type !== 0 || msg.author.bot) return

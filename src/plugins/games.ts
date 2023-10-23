@@ -1,10 +1,10 @@
+import chalk from 'chalk-template'
 import CAHGame from '@/games/cah/game'
 import UnoGame from '@/games/uno/game'
 import Bot from '@/services/Bot'
 import Game from '@/services/Game'
 import GameSession from '@/services/GameSession'
 import logger from '@/util/logger'
-import chalk from 'chalk'
 
 export interface SessionInfo<GameConfig, GameData> {
   id: string;

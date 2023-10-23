@@ -1,7 +1,7 @@
+import { Emoji, Message } from 'eris'
 import Bot from '@/services/Bot'
 import accessObjPath from '@/util/accessObjPath'
 import logger from '@/util/logger'
-import { Emoji, Message } from 'eris'
 
 export default function reactMenuRemove(
   this: Bot,

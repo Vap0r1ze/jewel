@@ -1,7 +1,7 @@
+import { queue } from 'async'
+import chalk from 'chalk-template'
 import Bot from '@/services/Bot'
 import logger from '@/util/logger'
-import { queue } from 'async'
-import chalk from 'chalk'
 
 export interface MenuInfo {
   channelId: string;

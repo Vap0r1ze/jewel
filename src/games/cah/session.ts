@@ -1,7 +1,7 @@
 import moment from 'moment'
+import { Message } from 'eris'
 import GameSession from '@/services/GameSession'
 import baseDeck from '@/services/data/cah.deck'
-import { Message } from 'eris'
 import transformText from '@/util/text'
 
 const letterEmoji: string[] = [] // regional indicators
@@ -23,9 +23,9 @@ export interface CAHData {
 }
 
 export default class CAHSession extends GameSession {
-  gameConfig!: import('@/games/cah/game').default['defaultConfig']
+  declare gameConfig: import('@/games/cah/game').default['defaultConfig']
 
-  data!: CAHData | { initialized?: false }
+  declare data: CAHData | { initialized?: false }
 
   // Events
   async handleDM(msg: Message) {

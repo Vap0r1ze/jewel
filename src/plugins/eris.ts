@@ -1,5 +1,5 @@
 import Eris from 'eris'
-import chalk from 'chalk'
+import chalk from 'chalk-template'
 import Bot from '@/services/Bot'
 import logger from '@/util/logger'
 

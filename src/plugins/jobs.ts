@@ -1,5 +1,5 @@
 import schedule, { Job } from 'node-schedule'
-import chalk from 'chalk'
+import chalk from 'chalk-template'
 import moment, { Moment } from 'moment'
 import Bot from '@/services/Bot'
 import accessObjPath from '@/util/accessObjPath'

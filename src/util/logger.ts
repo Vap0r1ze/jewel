@@ -1,7 +1,6 @@
-import chalk from 'chalk'
+import chalk from 'chalk-template'
 import dateFormat from 'dateformat'
 import { Message } from 'eris'
-import * as Sentry from '@sentry/node'
 
 const logger = {
   format: '[hh:MM:ss TT]',
@@ -12,7 +11,6 @@ const logger = {
     console.log(chalk`${this.time} {bgYellow.white.bold  ${title.toUpperCase()} } ${desc}`)
   },
   error(title: string, error: Error | string): void {
-    Sentry.captureException(error, scope => scope.setTag('title', title))
     console.log(chalk`${this.time} {bgRed.white.bold  ${title.toUpperCase()} } ${(error instanceof Error) ? (error.stack || error.message) : error}`)
   },
   log(title: string, desc: string): void {

@@ -1,6 +1,6 @@
+import { Message, MessageContent } from 'eris'
 import { SessionInfoBasic } from '@/plugins/games'
 import logger from '@/util/logger'
-import { Message, MessageContent } from 'eris'
 import Bot from './Bot'
 
 export default class GameSession {

@@ -1,6 +1,6 @@
-import { SessionInfoBasic } from '@/plugins/games'
 import { Message } from 'eris'
 import shortid from 'shortid'
+import { SessionInfoBasic } from '@/plugins/games'
 import Bot from './Bot'
 import Command, { CommandArgs } from './Command'
 import GameSession from './GameSession'

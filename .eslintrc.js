@@ -17,6 +17,15 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     '@typescript-eslint/semi': [2, 'never'],
+    // '@typescript-eslint/indent': ['error', 4],
+
+    '@typescript-eslint/indent': 'off',
+
+    'prefer-const': ['error', {
+      destructuring: 'all',
+    }],
+    'consistent-return': 'off',
+    'import/extensions': 'off',
     'arrow-parens': ['error', 'as-needed'],
     'class-methods-use-this': 'off',
     'no-await-in-loop': 'off',
@@ -27,17 +36,17 @@ module.exports = {
     'no-shadow': 'off',
     'no-sparse-arrays': 'off',
     'prefer-destructuring': ['error', {
-      'VariableDeclarator': {
-        'array': true,
-        'object': true,
+      VariableDeclarator: {
+        array: true,
+        object: true,
       },
-      'AssignmentExpression': {
-        'array': false,
-        'object': false,
-      }
+      AssignmentExpression: {
+        array: false,
+        object: false,
+      },
     }, {
-      'enforceForRenamedProperties': false,
-    }],
-    'semi': [2, 'never'],
+        enforceForRenamedProperties: false,
+      }],
+    semi: [2, 'never'],
   },
 }
