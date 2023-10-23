@@ -2,23 +2,23 @@ import { Message } from 'eris'
 import Command from '../services/Command'
 
 export default class GitHubCommand extends Command {
-  get name() {
-    return 'github'
-  }
+    get name() {
+        return 'github'
+    }
 
-  get aliases() {
-    return ['source', 'code', 'gh', 'src']
-  }
+    get aliases() {
+        return ['source', 'code', 'gh', 'src']
+    }
 
-  get isHidden() {
-    return true
-  }
+    get isHidden() {
+        return true
+    }
 
-  get description() {
-    return 'Get a link to the sourcecode of this bot'
-  }
+    get description() {
+        return 'Get a link to the sourcecode of this bot'
+    }
 
-  handle(msg: Message) {
-    msg.channel.createMessage(`<@${msg.author.id}>, <:github:786216616760573972> <https://github.com/Vap0r1ze/jewel>`)
-  }
+    handle(msg: Message) {
+        msg.channel.createMessage(`<@${msg.author.id}>, <:github:786216616760573972> <https://github.com/Vap0r1ze/jewel>`)
+    }
 }

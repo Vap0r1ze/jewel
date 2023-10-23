@@ -4,37 +4,37 @@ import GameCommand from './GameCommand'
 import GameSession from './GameSession'
 
 export default class Game {
-  ctx: Bot
+    ctx: Bot
 
-  command: GameCommand
+    command: GameCommand
 
-  constructor(ctx: Bot) {
-    this.ctx = ctx
-    this.command = new GameCommand(this.ctx, this)
-  }
+    constructor(ctx: Bot) {
+        this.ctx = ctx
+        this.command = new GameCommand(this.ctx, this)
+    }
 
-  get name() { return '' }
+    get name() { return '' }
 
-  get displayName() { return '' }
+    get displayName() { return '' }
 
-  get description() { return '' }
+    get description() { return '' }
 
-  get color() { return 0 }
+    get color() { return 0 }
 
-  get playerRange(): [number, number] { return [0, 0] }
+    get playerRange(): [number, number] { return [0, 0] }
 
-  get defaultConfig() { return {} }
+    get defaultConfig() { return {} }
 
-  get helpEmbed() { return {} }
+    get helpEmbed() { return {} }
 
-  get Session() {
-    return GameSession
-  }
+    get Session() {
+        return GameSession
+    }
 
-  createSession(sessionInfo: SessionInfoBasic) {
-    const db = this.ctx.getDB('games')
-    const session = new this.Session(sessionInfo, this)
-    db.set(`sessions.${sessionInfo.id}`, sessionInfo)
-    this.ctx.gameSessions[sessionInfo.id] = session
-  }
+    createSession(sessionInfo: SessionInfoBasic) {
+        const db = this.ctx.getDB('games')
+        const session = new this.Session(sessionInfo, this)
+        db.set(`sessions.${sessionInfo.id}`, sessionInfo)
+        this.ctx.gameSessions[sessionInfo.id] = session
+    }
 }

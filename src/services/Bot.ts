@@ -11,35 +11,35 @@ import { createMsgqManager } from '@/plugins/msgq'
 import createProfileManager from '@/plugins/profiles'
 
 export default class Bot extends EventEmitter {
-  client = createClient.call(this)
+    client = createClient.call(this)
 
-  getDB = getDB
+    getDB = getDB
 
-  msgq = createMsgqManager.call(this)
+    msgq = createMsgqManager.call(this)
 
-  jobs = createJobManager.call(this)
+    jobs = createJobManager.call(this)
 
-  profiles = createProfileManager.call(this)
+    profiles = createProfileManager.call(this)
 
-  commands = registerCommands.call(this)
+    commands = registerCommands.call(this)
 
-  evtHandlers = registerEventHandlers.call(this)
+    evtHandlers = registerEventHandlers.call(this)
 
-  menus = createMenuManager.call(this)
+    menus = createMenuManager.call(this)
 
-  games: Dict<import('@/services/Game').default>
+    games: Dict<import('@/services/Game').default>
 
-  gameSessions: Dict<import('@/services/GameSession').default>
+    gameSessions: Dict<import('@/services/GameSession').default>
 
-  constructor() {
-    super()
+    constructor() {
+        super()
 
-    const { games, gameSessions } = registerGames.call(this)
-    this.games = games
-    this.gameSessions = gameSessions
+        const { games, gameSessions } = registerGames.call(this)
+        this.games = games
+        this.gameSessions = gameSessions
 
-    setImmediate(() => {
-      this.emit('init')
-    })
-  }
+        setImmediate(() => {
+            this.emit('init')
+        })
+    }
 }
