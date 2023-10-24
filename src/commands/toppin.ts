@@ -1,5 +1,6 @@
 import { Message, TextableChannel } from 'eris'
 import Command, { CommandArgs } from '../services/Command'
+import type Bot from '@/services/Bot'
 
 const channelPattern = /^<#(\d+)>$/
 const messagePattern = /^https?:\/\/(?:ptb\.|canary\.)?discord\.com\/channels\/(\d+)\/(\d+)\/(\d+)$/
@@ -32,15 +33,15 @@ export default class TopPinCommand extends Command {
         return ['pin']
     }
 
-    async doTopPinCheck(channel: TextableChannel) {
+    async doTopPinCheck(this: Bot, channel: TextableChannel) {
         if (channel.type !== 0) return
-        const db = this.ctx.getDB('toppins')
+        const db = this.getDB('toppins')
         const isDisabled = !db.get(channel.id)
         const topPinnedMessageId = db.get(`${channel.id}:message`)
         if (isDisabled || !topPinnedMessageId) return
 
         const pins = await channel.getPins()
-        if (pins[0].id === topPinnedMessageId) return
+        if (pins[0]?.id === topPinnedMessageId) return
 
         const topPinnedMessage = await channel.getMessage(topPinnedMessageId).catch(() => null)
         if (!topPinnedMessage) {
@@ -92,6 +93,6 @@ export default class TopPinCommand extends Command {
             await msg.channel.createMessage(replyForToggle)
         }
 
-        await this.doTopPinCheck(channel)
+        await this.doTopPinCheck.call(this.ctx, channel)
     }
 }
